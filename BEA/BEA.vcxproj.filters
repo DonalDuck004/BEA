@@ -1,0 +1,848 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{1cebfe60-5861-4fea-b188-76bf6f395ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly">
+      <UniqueIdentifier>{e2dce7c1-b933-47ac-a970-e46a5526ca90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core">
+      <UniqueIdentifier>{f6e22fa9-1c80-4e89-920a-1bf38c14dfc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core\apps">
+      <UniqueIdentifier>{7109f617-eb5a-4fc4-9eb3-656ff67378d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core\apps\sntp">
+      <UniqueIdentifier>{0030b93b-8324-4fc7-8776-d5672fba3234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core\libb64">
+      <UniqueIdentifier>{0d3186c9-d9b2-42e7-91d0-90fb4bde62f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries">
+      <UniqueIdentifier>{7c6e1cb6-c10d-420f-bb0b-5160d41dbaa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries\LiquidCrystal">
+      <UniqueIdentifier>{94fce6b5-9d00-4304-bc4b-7321b40c2713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries\ESP32-A2DP-main">
+      <UniqueIdentifier>{17cdd934-4db4-4b46-996b-d72967044051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries\IRremote">
+      <UniqueIdentifier>{37c87c61-cbec-47fc-b49e-f7c70702daa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries\Arduino-IRremote-master">
+      <UniqueIdentifier>{700a5480-8993-4734-af16-f266bb0104be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BEA.ino" />
+    <ClCompile Include="string_utilies\string_utilies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LedHandler\LedHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LCDHandler\LCDHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\base64.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\cbuf.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Esp.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-adc.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-bt.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-cpu.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-dac.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-gpio.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c-slave.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-ledc.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-matrix.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-misc.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-psram.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rgb-led.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rmt.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-sigmadelta.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-spi.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-time.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-timer.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-tinyusb.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-touch.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-uart.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FirmwareMSC.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\firmware_msc_fat.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FunctionalInterrupt.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HardwareSerial.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HWCDC.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPAddress.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPv6Address.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\main.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\MD5Builder.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Print.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\stdlib_noniso.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Stream.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\StreamString.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Tone.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USB.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBCDC.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBMSC.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_pulse.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_shift.c">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WMath.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WString.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.cpp">
+      <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPCommon.cpp">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSink.cpp">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSinkQueued.cpp">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSource.cpp">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\SoundData.cpp">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClCompile>
+    <ClCompile Include="LCDHandler\LCDMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IRHandler\IRHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BEAHandler\BEAHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="__vm\.BEA.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="string_utilies\string_utilies.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LedHandler\LedHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LCDHandler\LCDMessage.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LCDHandler\LCDHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Arduino.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\base64.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\binary.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\cbuf.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Client.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\core_version.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Esp.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-adc.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-bt.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-cpu.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-dac.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-gpio.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c-slave.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-ledc.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-log.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-matrix.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-psram.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rgb-led.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rmt.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-sigmadelta.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-spi.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-timer.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-tinyusb.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-touch.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-uart.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp8266-compat.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp_arduino_version.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FirmwareMSC.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\firmware_msc_fat.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FunctionalInterrupt.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HardwareSerial.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HWCDC.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPAddress.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPv6Address.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\MD5Builder.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\pgmspace.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Print.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Printable.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Server.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\stdlib_noniso.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Stream.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\StreamString.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Udp.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USB.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBCDC.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBMSC.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WCharacter.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_private.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WString.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\apps\sntp\sntp.h">
+      <Filter>src\_micro-api-readonly\core\apps\sntp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\libb64\cdecode.h">
+      <Filter>src\_micro-api-readonly\core\libb64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\libb64\cencode.h">
+      <Filter>src\_micro-api-readonly\core\libb64</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\variants\esp32\pins_arduino.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.h">
+      <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\A2DPVolumeControl.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DP.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPCommon.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSink.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSinkQueued.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\BluetoothA2DPSource.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\config.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\SoundData.h">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </ClInclude>
+    <ClInclude Include="LCDHandler\LCDMessageFreeOpt.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRHandler\IRHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BEAHandler\BEAHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\keywords.txt">
+      <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </Text>
+    <Text Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\CMakeLists.txt">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </Text>
+    <Text Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\keywords.txt">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\library.properties">
+      <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\library.properties">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\annotated.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\classes.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_default_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_default_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_linear_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_linear_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_no_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_no_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_simple_exponential_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_simple_exponential_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_a2_d_p_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_callbacks-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_callbacks.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_common-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_common.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_callbacks-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_callbacks.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_min_r_a_m-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_min_r_a_m.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_queued-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_sink_queued.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_source-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_bluetooth_a2_d_p_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_default_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_default_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_linear_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_linear_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_no_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_no_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_one_channel8_bit_sound_data-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_one_channel8_bit_sound_data.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_one_channel_sound_data-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_one_channel_sound_data.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_simple_exponential_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_simple_exponential_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_sound_data-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_sound_data.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_two_channel_sound_data-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_two_channel_sound_data.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_volume_control-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\class_volume_control.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\config_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\dir_68267d1309a1af8e8297ef4c3efbcdba.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\files.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\functions.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\functions_func.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\functions_rela.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\functions_vars.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\globals.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\globals_func.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\globals_type.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\group__a2dp.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\hierarchy.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\index.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\md__r_e_a_d_m_e.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\modules.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\pages.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\structapp__msg__t-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\structapp__msg__t.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\structbt__app__msg__t-members.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\structbt__app__msg__t.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_a2_d_p_volume_control_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_8h.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_common_8h.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_common_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_sink_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_sink_queued_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_bluetooth_a2_d_p_source_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_sound_data_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\_volume_control_8h_source.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_1.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_10.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_11.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_12.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_2.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_3.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_4.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_5.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_6.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_7.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_8.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_9.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_a.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_b.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_c.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_d.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_e.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\all_f.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_1.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_2.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_3.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_4.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_5.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_6.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_7.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\classes_8.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\files_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_1.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_10.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_11.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_12.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_2.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_3.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_4.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_5.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_6.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_7.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_8.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_9.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_a.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_b.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_c.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_d.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_e.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\functions_f.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\nomatches.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\pages_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\related_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\variables_0.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\variables_1.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\variables_2.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\variables_3.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\docs\html\search\variables_4.html">
+      <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
+    </None>
+  </ItemGroup>
+</Project>
