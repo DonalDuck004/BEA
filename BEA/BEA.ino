@@ -9,6 +9,10 @@
 
 // #define SERIAL_DEBUG
 
+// #define DEBUG_IR_VALUE
+
+// #define TROLL_BUILD
+
 #define BL_META_TRACK_NAME 1
 #define BL_META_SINGER 2
 
@@ -47,6 +51,7 @@
 #define IR_PAUSE 64
 #define IR_NEXT 67
 #define IR_BACK 68
+#define IR_SPARA_STRONZATA 22
 
 #define TITLE_ID  0b100
 #define AUTHOR_ID 0b010
@@ -54,10 +59,28 @@
 
 #define BL_MAX_AUDIO 127
 
+#ifdef TROLL_BUILD
+
+static byte coffee[8] = {
+  B00100,
+  B01000,
+  B00100,
+  B01111,
+  B01011,
+  B01010,
+  B11111,
+  B01110,
+};
+
+const int coffee_byte = 1;
+
+#endif
+
 static LCDHandler* lcd = new LCDHandler(new LiquidCrystal(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D0_PIN, LCD_D1_PIN, LCD_D2_PIN, LCD_D3_PIN), LCD_COLS, LCD_ROWS, LCD_TICK_DELAY);
 static BluetoothA2DPSink bl;
 static LedHandler* led = new LedHandler(BL_LED_PIN);
 static IRHandler* ir = new IRHandler(IR_PIN, IR_TICK_DELAY);
+
 
 void ProcessProgressBar(int current_vol) {
     char* str_number;
@@ -80,7 +103,9 @@ void ProcessProgressBar(int current_vol) {
     memset(buff + 1, '#', filled);
     memset(buff + filled + 1, '-', bar_size - filled);
 
-    lcd->AddMessage(buff, 1, 3, true, VOLUNE_ID);
+    LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, strlen(buff), 3);
+    msg->user_flags = VOLUNE_ID;
+    lcd->AddMessage(msg);
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
@@ -88,6 +113,13 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
         return;
 
     int current_vol = ((float)bl.get_volume() / BL_MAX_AUDIO * 100) / 10 * 10;
+
+#ifdef DEBUG_IR_VALUE
+    char* tmp = (char*)malloc(3 * sizeof(char));
+    sprintf(tmp, "%d", cmd);
+    lcd->AddMessage(new LCDMessageStaticText(1, tmp, strlen(tmp)));
+#endif
+
     switch (cmd) {
         case IR_VOL_PLUS:
             current_vol = current_vol + 10;
@@ -120,10 +152,16 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
         case IR_DISCONNECT:
             bl.disconnect();
             break;
+#ifdef TROLL_BUILD
+        case IR_SPARA_STRONZATA:
+            char* buff_r1 = (char*)malloc(sizeof(char) * 16);
+            sprintf(buff_r1, "Women %c detected", 1);
+            lcd->AddMessage(new LCDMessageStaticText(0, buff_r1, 16, 6));
+            lcd->AddMessage(new LCDMessageStaticText(1, "opinion rejected", 16, 6, LCDMessageFreeOpt::NO_CLEAN));
+            break;
+#endif
     }
 }
-
-
 
 void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
     if (meta_type == BL_META_TRACK_NAME || meta_type == BL_META_SINGER) {
@@ -133,8 +171,15 @@ void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
             lcd->ClearAll();
         }
 
-        lcd->AddMessage(msg, meta_type - 1, PLAY_FOR_TICKS_DISABLED, strlen(msg) <= LCD_COLS);
+        BaseLCDMessageText* lcd_msg;
+        if (strlen(msg) <= LCD_COLS)
+            lcd_msg = new LCDMessageStaticText(meta_type - 1, msg, strlen(msg));
+        else 
+            lcd_msg = new LCDMessageText(meta_type - 1, msg, strlen(msg));
+
+        lcd->AddMessage(lcd_msg);
     }
+
 #ifdef SERIAL_DEBUG
     Serial.printf("AVRC metadata rsp: attribute id 0x%x, %s\n", meta_type, meta);
 #endif
@@ -147,9 +192,7 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
     }
     else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
         lcd->RemoveMessages();
-        lcd->ClearAll();
-        lcd->AddMessage(DISCONNECTED_MESSAGE_R0, 0, PLAY_FOR_TICKS_DISABLED, DISCONNECTED_MESSAGE_R0_STATIC, LCDMessageFreeOpt::NO_CLEAN);
-        lcd->AddMessage(DISCONNECTED_MESSAGE_R1, 1, PLAY_FOR_TICKS_DISABLED, DISCONNECTED_MESSAGE_R1_STATIC, LCDMessageFreeOpt::NO_CLEAN);
+        SetDisconnectedMessage();
         led->SetDelay(BL_DISCONNECTED_BLINK_DELAY);
     }
     else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING) {
@@ -160,11 +203,33 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
     }
 }
 
+void SetDisconnectedMessage() {
+    BaseLCDMessageText* lcd_msg;
+    lcd->ClearAll();
+
+    if (DISCONNECTED_MESSAGE_R0_STATIC)
+        lcd_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, strlen(DISCONNECTED_MESSAGE_R0), LCDMessageFreeOpt::NO_CLEAN);
+    else
+        lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, strlen(DISCONNECTED_MESSAGE_R0), LCDMessageFreeOpt::NO_CLEAN);
+    lcd->AddMessage(lcd_msg);
+
+    if (DISCONNECTED_MESSAGE_R1)
+        lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, strlen(DISCONNECTED_MESSAGE_R1), LCDMessageFreeOpt::NO_CLEAN);
+    else
+        lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, strlen(DISCONNECTED_MESSAGE_R1), LCDMessageFreeOpt::NO_CLEAN);
+    lcd->AddMessage(lcd_msg);
+}
+
 void setup() {
 #ifdef SERIAL_DEBUG
     Serial.begin(9600);
     Serial.write("Test");
 #endif
+#ifdef TROLL_BUILD
+    lcd->GetRaw()->createChar(1, coffee);
+    lcd->GetRaw()->clear(); // strict needed
+#endif
+
     ir->SetCallback(HandleIR);
 
     static i2s_config_t i2s_config = {
@@ -187,20 +252,18 @@ void setup() {
         .data_out_num = 33,
         .data_in_num = I2S_PIN_NO_CHANGE
     };
+
     bl.set_pin_config(my_pin_config);
     bl.set_avrc_metadata_callback(avrc_metadata_callback);
     bl.set_on_connection_state_changed(connection_state_changed_callback);
     bl.start(BL_DEVICE_NAME);
 
-    if (!bl.is_connected()) { // In a rapid reboot the connection can still be active
-        lcd->ClearAll();
-        lcd->AddMessage(DISCONNECTED_MESSAGE_R0, 0, PLAY_FOR_TICKS_DISABLED, DISCONNECTED_MESSAGE_R0_STATIC, LCDMessageFreeOpt::NO_CLEAN);
-        lcd->AddMessage(DISCONNECTED_MESSAGE_R1, 1, PLAY_FOR_TICKS_DISABLED, DISCONNECTED_MESSAGE_R1_STATIC, LCDMessageFreeOpt::NO_CLEAN);
-    }
-
+    if (!bl.is_connected())  // In a rapid reboot the connection can still be active
+        SetDisconnectedMessage();
 }
 
 void loop() {
+    return;
     lcd->Tick();
     led->Tick();
     ir->Tick();
