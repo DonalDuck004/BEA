@@ -12,10 +12,11 @@ class LCDHandler;
 
 class BaseLCDMessage {
 	public:
-		int user_flags = 0;
+		byte user_flags = 0;
 		bool enabled = true;
 
 		virtual bool DoUpdate(LCDHandler* lcd) = 0;
+		BaseLCDMessage* SetFlags(byte flags);
 
 		int GetAtRow();
 
@@ -26,10 +27,11 @@ class BaseLCDMessage {
 
 class BaseLCDMessageText : public BaseLCDMessage {
 	public:
-		BaseLCDMessageText(int at_row, char* str, int str_len, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
+		BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
 
 		~BaseLCDMessageText();
 		virtual bool DoUpdate(LCDHandler* lcd) = 0;
+		void SetStrLen(int len);
 
 	protected:
 		char* str;
@@ -39,15 +41,18 @@ class BaseLCDMessageText : public BaseLCDMessage {
 
 class LCDMessageText : public BaseLCDMessageText {
 	public:
-		LCDMessageText(int at_row, char* str, int str_len, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
+		LCDMessageText(int at_row, char* str, bool play_once = false, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
 
 		bool GetPlayed();
+
+		bool GetPlayOnce();
 
 		bool DoUpdate(LCDHandler* lcd);
 
 	protected:
 		int idx = 0;
 		bool played = false;
+		bool play_once = false;
 };
 
 class LCDMessageStaticText : public LCDMessageText {
@@ -55,7 +60,7 @@ class LCDMessageStaticText : public LCDMessageText {
 		int play_for_x_ticks;
 
 	public:
-		LCDMessageStaticText(int at_row, char* str, int str_len, int play_for_x_ticks = PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
+		LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks = PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR);
 
 		bool DoUpdate(LCDHandler* lcd);
 };

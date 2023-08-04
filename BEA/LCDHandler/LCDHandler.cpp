@@ -26,11 +26,10 @@ int LCDHandler::GetRows(){
     
 void LCDHandler::AddMessage(BaseLCDMessage* msg){
     this->messages_count++;
-    if (this->messages == NULL){
+    if (this->messages == NULL)
         this->messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*));
-    }else{
+    else
         this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
-    }
 
     this->messages[this->messages_count - 1] = msg;
 }
@@ -46,7 +45,7 @@ void LCDHandler::RemoveMessageAt(int at){
         this->messages = NULL;
     }else{
         delete this->messages[at];
-        // TODO CHECK
+
         if (at == this->messages_count)
             this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
         else if (at == 0)
@@ -109,4 +108,86 @@ void LCDHandler::DoUpdate(){
 
 LiquidCrystal* LCDHandler::GetRaw() {
     return this->lcd;
+}
+
+bool LCDHandler::CheckFlags(int mf, int f, bool s) {
+    return (s && mf == f) || (!s && (mf & f) == f);
+}
+
+bool LCDHandler::RemoveMessagesAtRow(int row) {
+    bool deleted = false;
+
+    for (int i = 0; i < this->messages_count; i++) {
+        if (this->messages[i]->GetAtRow() == row) {
+            this->RemoveMessageAt(i);
+            i--;
+            deleted = true;
+        }
+    }
+
+    return deleted;
+}
+
+bool LCDHandler::RemoveMessagesWithFlags(byte flags, bool strict) {
+    bool deleted = false;
+
+    for (int i = 0; i < this->messages_count; i++) {
+        if (CheckFlags(this->messages[i]->user_flags, flags, strict)) {
+            this->RemoveMessageAt(i);
+            i--;
+            deleted = true;
+        }
+    }
+
+    return deleted;
+}
+
+LCDMessageGroup LCDHandler::GetMessagesAtRow(int row) {
+    int found = 0;
+    LCDMessageGroup out;
+
+    out.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * out.count);
+
+    for (int i = 0; i < this->messages_count; i++) {
+        if (this->messages[i]->GetAtRow() == row) {
+            if (++found > out.count)
+                out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * ++out.count);
+
+            out.messages[found - 1] = this->messages[i];
+        }
+    }
+
+    if (out.count != found)
+    {
+        out.count = found;
+        out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
+    }
+
+    return out;
+}
+
+
+LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
+    int found = 0;
+    LCDMessageGroup out;
+
+    out.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * out.count);
+
+    for (int i = 0; i < this->messages_count; i++) {
+        if (CheckFlags(this->messages[i]->user_flags, flags, strict)) {
+
+            if (++found > out.count)
+                out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * ++out.count);
+
+            out.messages[found - 1] = this->messages[i];
+        }
+    }
+
+    if (out.count != found)
+    {
+        out.count = found;
+        out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
+    }
+
+    return out;
 }

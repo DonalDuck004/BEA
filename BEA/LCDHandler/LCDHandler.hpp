@@ -5,7 +5,15 @@
 #include "LCDMessageFreeOpt.hpp"
 #include "../string_utilies/string_utilies.hpp"
 #include "../BEAHandler/BEAHandler.hpp"
+
+#define LCDHANDLER_GROUP_BASE_BUFF 2
+
 class BaseLCDMessage;
+
+typedef struct {
+	BaseLCDMessage** messages;
+	int count = LCDHANDLER_GROUP_BASE_BUFF;
+} LCDMessageGroup;
 
 class LCDHandler : public BEAHandler{
 	private:
@@ -15,6 +23,8 @@ class LCDHandler : public BEAHandler{
 		int repeat_after;
 		int messages_count;
 		BaseLCDMessage **messages;
+
+		static inline bool CheckFlags(int mf, int f, bool s);
 
 	protected:
 		void DoUpdate() override;
@@ -33,6 +43,14 @@ class LCDHandler : public BEAHandler{
 		void RemoveMessageAt(int at);
 
 		BaseLCDMessage* GetMessageAt(int at);
+
+		LCDMessageGroup GetMessagesWithFlags(byte flags, bool strict = false);
+
+		LCDMessageGroup GetMessagesAtRow(int row);
+		
+		bool RemoveMessagesAtRow(int row);
+
+		bool RemoveMessagesWithFlags(byte flags, bool strict = false);
 
 		void RemoveMessages();
 

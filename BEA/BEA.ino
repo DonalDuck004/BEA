@@ -8,16 +8,15 @@
 #include "IRHandler/IRHandler.hpp"
 
 // #define SERIAL_DEBUG
-
 // #define DEBUG_IR_VALUE
-
-// #define TROLL_BUILD
+#define TROLL_BUILD
+#define MEM_DEBUG_BUILD
 
 #define BL_META_TRACK_NAME 1
 #define BL_META_SINGER 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V1.5"
+#define BL_DEVICE_NAME "BEA V1.7"
 
 #define BL_DISCONNECTED_BLINK_DELAY 500
 #define BL_CONNECTING_BLINK_DELAY 250
@@ -44,7 +43,6 @@
 #define DISCONNECTED_MESSAGE_R1 BL_DEVICE_NAME
 #define DISCONNECTED_MESSAGE_R1_STATIC true
 
-
 #define IR_DISCONNECT 69
 #define IR_VOL_PLUS 70
 #define IR_VOL_MINUS 21
@@ -52,10 +50,15 @@
 #define IR_NEXT 67
 #define IR_BACK 68
 #define IR_SPARA_STRONZATA 22
+#define IR_HEAP_DEBUG 25
 
-#define TITLE_ID  0b100
-#define AUTHOR_ID 0b010
-#define VOLUNE_ID 0b001
+#define TROLL_R0_ID  0b10000
+#define TROLL_R1_ID  0b01000
+#define TITLE_ID     0b00100
+#define AUTHOR_ID    0b00010
+#define VOLUNE_ID    0b00001
+
+#define TROLL_GENERIC_ID  TROLL_R0_ID | TROLL_R1_ID
 
 #define BL_MAX_AUDIO 127
 
@@ -72,7 +75,7 @@ static byte coffee[8] = {
   B01110,
 };
 
-const int coffee_byte = 1;
+const byte coffee_byte = 1;
 
 #endif
 
@@ -103,22 +106,88 @@ void ProcessProgressBar(int current_vol) {
     memset(buff + 1, '#', filled);
     memset(buff + filled + 1, '-', bar_size - filled);
 
-    LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, strlen(buff), 3);
+    LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, 3);
     msg->user_flags = VOLUNE_ID;
     lcd->AddMessage(msg);
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
-    if (!bl.is_connected())
+    bool ret = true;
+   
+#ifdef DEBUG_IR_VALUE
+    char* tmp = (char*)malloc(4 * sizeof(char));
+    sprintf(tmp, "%d", cmd);
+    lcd->AddMessage(new LCDMessageStaticText(1, tmp, 3));
+#endif
+
+#if defined(TROLL_BUILD) || defined(MEM_DEBUG_BUILD)
+    char* buff_r0 = NULL;
+    char* buff_r1 = NULL;
+#endif
+
+#ifdef TROLL_BUILD
+    static int last = -1;
+    int val;
+#endif
+
+    switch (cmd) {
+#ifdef TROLL_BUILD
+        case IR_SPARA_STRONZATA:
+            if (lcd->RemoveMessagesWithFlags(TROLL_R0_ID, true))
+                lcd->RemoveMessagesWithFlags(TROLL_R1_ID, true);
+            val = rand() % 5;
+            if (val == last)
+                val = (val + 1) % 5;
+
+            switch (last = val) {
+                case 0:
+                    buff_r0 = (char*)malloc(sizeof(char) * 17);
+                    sprintf(buff_r0, "Women %c detected", coffee_byte);
+                    lcd->AddMessage((new LCDMessageStaticText(0, buff_r0, 6, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
+                    buff_r0 = NULL;
+
+                    buff_r1 = "Opinion rejected";
+                    break;
+                case 1:
+                    buff_r0 = "Chiesi?         ";
+                    buff_r1 = "Non paresse     ";
+                    break;
+                case 2:
+                    buff_r0 = "Null deferencing";
+                    buff_r1 = "GODOOOOOOOOOOOOO";
+                    break;
+                case 3:
+                    buff_r0 = "Maradona        ";
+                    buff_r1 = "Sniffer         ";
+                    break;
+                case 4:
+                    break;
+                    // TODO FIX
+                    lcd->AddMessage((new LCDMessageText(0, "zio mattone, zio yogurt, zio banana", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
+                    lcd->AddMessage((new LCDMessageText(1, "Sono tutti zii ma diverse categorie", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R1_ID));
+                    break;
+            }
+
+            if (buff_r0 != NULL)
+                lcd->AddMessage((new LCDMessageStaticText(0, buff_r0, 6, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
+
+            if (buff_r1 != NULL)
+                lcd->AddMessage((new LCDMessageStaticText(1, buff_r1, 6, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R1_ID));
+
+            break;
+#endif
+#ifdef MEM_DEBUG_BUILD
+        case IR_HEAP_DEBUG:
+            break;
+#endif
+        default:
+            ret = false;
+    }
+
+    if (!bl.is_connected() || ret)
         return;
 
     int current_vol = ((float)bl.get_volume() / BL_MAX_AUDIO * 100) / 10 * 10;
-
-#ifdef DEBUG_IR_VALUE
-    char* tmp = (char*)malloc(3 * sizeof(char));
-    sprintf(tmp, "%d", cmd);
-    lcd->AddMessage(new LCDMessageStaticText(1, tmp, strlen(tmp)));
-#endif
 
     switch (cmd) {
         case IR_VOL_PLUS:
@@ -152,14 +221,6 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
         case IR_DISCONNECT:
             bl.disconnect();
             break;
-#ifdef TROLL_BUILD
-        case IR_SPARA_STRONZATA:
-            char* buff_r1 = (char*)malloc(sizeof(char) * 16);
-            sprintf(buff_r1, "Women %c detected", 1);
-            lcd->AddMessage(new LCDMessageStaticText(0, buff_r1, 16, 6));
-            lcd->AddMessage(new LCDMessageStaticText(1, "opinion rejected", 16, 6, LCDMessageFreeOpt::NO_CLEAN));
-            break;
-#endif
     }
 }
 
@@ -173,9 +234,9 @@ void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
 
         BaseLCDMessageText* lcd_msg;
         if (strlen(msg) <= LCD_COLS)
-            lcd_msg = new LCDMessageStaticText(meta_type - 1, msg, strlen(msg));
+            lcd_msg = new LCDMessageStaticText(meta_type - 1, msg);
         else 
-            lcd_msg = new LCDMessageText(meta_type - 1, msg, strlen(msg));
+            lcd_msg = new LCDMessageText(meta_type - 1, msg);
 
         lcd->AddMessage(lcd_msg);
     }
@@ -195,12 +256,10 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
         SetDisconnectedMessage();
         led->SetDelay(BL_DISCONNECTED_BLINK_DELAY);
     }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING) {
+    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING)
         led->SetDelay(BL_CONNECTING_BLINK_DELAY);
-    }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTING) {
+    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTING)
         led->SetDelay(BL_DISCONNECTING_BLINK_DELAY);
-    }
 }
 
 void SetDisconnectedMessage() {
@@ -208,15 +267,16 @@ void SetDisconnectedMessage() {
     lcd->ClearAll();
 
     if (DISCONNECTED_MESSAGE_R0_STATIC)
-        lcd_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, strlen(DISCONNECTED_MESSAGE_R0), LCDMessageFreeOpt::NO_CLEAN);
+        lcd_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
     else
-        lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, strlen(DISCONNECTED_MESSAGE_R0), LCDMessageFreeOpt::NO_CLEAN);
+        lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
     lcd->AddMessage(lcd_msg);
 
     if (DISCONNECTED_MESSAGE_R1)
-        lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, strlen(DISCONNECTED_MESSAGE_R1), LCDMessageFreeOpt::NO_CLEAN);
+        lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
     else
-        lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, strlen(DISCONNECTED_MESSAGE_R1), LCDMessageFreeOpt::NO_CLEAN);
+        lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
+
     lcd->AddMessage(lcd_msg);
 }
 
@@ -226,8 +286,8 @@ void setup() {
     Serial.write("Test");
 #endif
 #ifdef TROLL_BUILD
-    lcd->GetRaw()->createChar(1, coffee);
-    lcd->GetRaw()->clear(); // strict needed
+    lcd->GetRaw()->createChar(coffee_byte, coffee);
+    lcd->GetRaw()->clear();
 #endif
 
     ir->SetCallback(HandleIR);
@@ -263,7 +323,6 @@ void setup() {
 }
 
 void loop() {
-    return;
     lcd->Tick();
     led->Tick();
     ir->Tick();

@@ -5,15 +5,31 @@ bool LCDMessageText::GetPlayed() {
 	return this->played;
 }
 
+bool LCDMessageText::GetPlayOnce() {
+    return this->play_once;
+}
+
 int BaseLCDMessage::GetAtRow() {
     return this->at_row;
 }
 
-BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, int str_len, LCDMessageFreeOpt free_op) {
+BaseLCDMessage* BaseLCDMessage::SetFlags(byte user_flags) {
+    this->user_flags = user_flags;
+    return this;
+}
+
+BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt free_op) {
 	this->str = str;
-	this->str_len = str_len;
+	this->str_len = strlen(str);
 	this->free_op = free_op;
     this->at_row = at_row;
+}
+
+void BaseLCDMessageText::SetStrLen(int len) {
+    if (len < 0)
+        return;
+
+    this->str_len = len;
 }
 
 BaseLCDMessageText::~BaseLCDMessageText() {
@@ -22,17 +38,16 @@ BaseLCDMessageText::~BaseLCDMessageText() {
 }
 
 
-LCDMessageText::LCDMessageText(int at_row, char* str, int str_len, LCDMessageFreeOpt free_op) : BaseLCDMessageText(at_row, str, str_len, free_op) {}
+LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op) : BaseLCDMessageText(at_row, str, free_op) {
+    this->play_once = play_once;
+}
 
 bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
-    if (!this->enabled) return false;
-   
     int cols = lcd->GetCols();
     LiquidCrystal* raw = lcd->GetRaw();
     
     if (this->str_len < cols)
         lcd->ClearRow(this->at_row);
-
 
     raw->setCursor(0, this->at_row);
 
@@ -44,6 +59,9 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
 
     if (this->idx == 1)
         this->played = true;
+
+    if (this->played && this->play_once)
+        return true;
 
     int diff = this->str_len - this->idx;
     if (-3 < diff && diff < cols) {
@@ -71,14 +89,12 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
 }
 
 
-LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int str_len, int play_for_x_ticks, LCDMessageFreeOpt free_op) :
-    LCDMessageText(at_row, str, str_len, free_op) {
+LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks, LCDMessageFreeOpt free_op) :
+    LCDMessageText(at_row, str, free_op) {
     this->play_for_x_ticks = play_for_x_ticks;
 }
 
 bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {
-    if (!this->enabled) return false;
-
     int cols = lcd->GetCols();
     LiquidCrystal* raw = lcd->GetRaw();
 
