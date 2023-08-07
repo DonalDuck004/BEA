@@ -16,7 +16,7 @@
 #define BL_META_SINGER 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V1.7"
+#define BL_DEVICE_NAME "BEA V1.9"
 
 #define BL_DISCONNECTED_BLINK_DELAY 500
 #define BL_CONNECTING_BLINK_DELAY 250
@@ -52,11 +52,12 @@
 #define IR_SPARA_STRONZATA 22
 #define IR_HEAP_DEBUG 25
 
-#define TROLL_R0_ID  0b10000
-#define TROLL_R1_ID  0b01000
-#define TITLE_ID     0b00100
-#define AUTHOR_ID    0b00010
-#define VOLUNE_ID    0b00001
+#define TROLL_R0_ID  0b100000
+#define TROLL_R1_ID  0b010000
+#define TITLE_ID     0b001000
+#define AUTHOR_ID    0b000100
+#define VOLUNE_ID    0b000010
+#define HEAP_ID      0b000001
 
 #define TROLL_GENERIC_ID  TROLL_R0_ID | TROLL_R1_ID
 
@@ -85,10 +86,16 @@ static LedHandler* led = new LedHandler(BL_LED_PIN);
 static IRHandler* ir = new IRHandler(IR_PIN, IR_TICK_DELAY);
 
 
+inline int DecimalLength(int n) {
+    return floor(log10f(n) + 1);
+}
+
+// TODO MERGE ProcessProgressBar and DisplayHeap
+// TODO Use map where possible
+
 void ProcessProgressBar(int current_vol) {
     char* str_number;
     char* buff;
-    int bar_size;
     int filled;
 
     assert(current_vol >= 0 && current_vol <= 100);
@@ -96,19 +103,52 @@ void ProcessProgressBar(int current_vol) {
     str_number = (char*)malloc(sizeof(char) * 5);
     sprintf(str_number, "%3d%%", current_vol);
 
-    bar_size = floor((float)(LCD_COLS - 3 - 3) / 5) * 5;
+    int bar_size = floor((float)(LCD_COLS - 3 - 3) / 5) * 5;
     filled = (float)current_vol / 100 * bar_size;
     buff = (char*)malloc(sizeof(char) * (LCD_COLS + 3 + 3 + 1));
     buff[0] = '|';
     buff[bar_size + 1] = '|';
     memmove(buff + bar_size + 2, str_number, strlen(str_number));
-
     memset(buff + 1, '#', filled);
     memset(buff + filled + 1, '-', bar_size - filled);
-
+    
     LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, 3);
-    msg->user_flags = VOLUNE_ID;
+    msg->SetFlags(VOLUNE_ID);
+    lcd->RemoveMessagesWithFlags(VOLUNE_ID, true, 1);
     lcd->AddMessage(msg);
+    free(str_number);
+}
+
+void DisplayHeap() {
+    const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
+                                      // 2 for || 4 for 000%
+   
+    uint32_t total_heap = ESP.getHeapSize();
+    uint32_t allocated_heap = total_heap - ESP.getFreeHeap();
+    int percentage = map(allocated_heap, 0, total_heap, 0, 100);
+    int filled = map(allocated_heap, 0, total_heap, 0, bar_size);
+    char* buff = (char*)malloc(sizeof(char) * (LCD_COLS + 1));
+    char* str_number = (char*)malloc(sizeof(char) * 5); // TODO Write directly to buff
+    sprintf(str_number, "%3d%%", percentage);
+    buff[0] = '|';
+    buff[bar_size + 1] = '|';
+    memmove(buff + bar_size + 2, str_number, strlen(str_number));
+    memset(buff + 1, '#', filled);
+    memset(buff + filled + 1, '-', bar_size - filled);
+    free(str_number);
+
+    int allocated_heap_kb = ((float)allocated_heap) / 1024;
+    int total_heap_kb = ((float)total_heap) / 1024;
+    
+    LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff, 3);
+    buff = (char*)malloc(sizeof(char) * (10 + DecimalLength(allocated_heap_kb) + DecimalLength(total_heap_kb)));
+    sprintf(buff, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
+    LCDMessageStaticText* msg2 = new LCDMessageStaticText(0, buff, 3);
+    msg1->SetFlags(HEAP_ID);
+    msg2->SetFlags(HEAP_ID);
+    lcd->RemoveMessagesWithFlags(HEAP_ID, true, 2);
+    lcd->AddMessage(msg1);
+    lcd->AddMessage(msg2);
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
@@ -133,8 +173,8 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
     switch (cmd) {
 #ifdef TROLL_BUILD
         case IR_SPARA_STRONZATA:
-            if (lcd->RemoveMessagesWithFlags(TROLL_R0_ID, true))
-                lcd->RemoveMessagesWithFlags(TROLL_R1_ID, true);
+            if (lcd->RemoveMessagesWithFlags(TROLL_R0_ID, true, 1))
+                lcd->RemoveMessagesWithFlags(TROLL_R1_ID, true, 1);
             val = rand() % 5;
             if (val == last)
                 val = (val + 1) % 5;
@@ -143,7 +183,7 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
                 case 0:
                     buff_r0 = (char*)malloc(sizeof(char) * 17);
                     sprintf(buff_r0, "Women %c detected", coffee_byte);
-                    lcd->AddMessage((new LCDMessageStaticText(0, buff_r0, 6, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
+                    lcd->AddMessage((new LCDMessageStaticText(0, buff_r0, 6))->SetFlags(TROLL_R0_ID));
                     buff_r0 = NULL;
 
                     buff_r1 = "Opinion rejected";
@@ -178,6 +218,7 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
 #endif
 #ifdef MEM_DEBUG_BUILD
         case IR_HEAP_DEBUG:
+            DisplayHeap();;
             break;
 #endif
         default:
@@ -193,14 +234,14 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
         case IR_VOL_PLUS:
             current_vol = current_vol + 10;
             if (current_vol > 100) current_vol = 100;
-            bl.set_volume((float)current_vol / 100 * BL_MAX_AUDIO);
+            bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
             ProcessProgressBar(current_vol);
             break;
         case IR_VOL_MINUS:
             current_vol = current_vol - 10;
             if (current_vol < 0) current_vol = 0;
-            bl.set_volume((float)current_vol / 100 * BL_MAX_AUDIO);
+            bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
             ProcessProgressBar(current_vol);
             break;

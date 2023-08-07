@@ -363,3 +363,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /BEA/__vm
+/BEAV1.5.zip
