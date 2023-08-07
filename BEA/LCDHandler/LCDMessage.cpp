@@ -13,6 +13,19 @@ int BaseLCDMessage::GetAtRow() {
     return this->at_row;
 }
 
+byte BaseLCDMessage::GetFlags() {
+    return this->user_flags;
+}
+
+bool BaseLCDMessage::GetListForSilent() {
+    return this->list_for_silent;
+}
+
+BaseLCDMessage* BaseLCDMessage::SetListForSilent(bool list_for_silent) {
+    this->list_for_silent = list_for_silent;
+    return this;
+}
+
 BaseLCDMessage* BaseLCDMessage::SetFlags(byte user_flags) {
     this->user_flags = user_flags;
     return this;
@@ -23,6 +36,8 @@ BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt 
 	this->str_len = strlen(str);
 	this->free_op = free_op;
     this->at_row = at_row;
+
+    this->list_for_silent = false;
 }
 
 void BaseLCDMessageText::SetStrLen(int len) {
@@ -92,6 +107,11 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
 LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks, LCDMessageFreeOpt free_op) :
     LCDMessageText(at_row, str, free_op) {
     this->play_for_x_ticks = play_for_x_ticks;
+}
+
+void LCDMessageStaticText::DoSilentUpdate(LCDHandler* lcd) {
+    if (this->play_for_x_ticks == PLAY_FOR_TICKS_DISABLED)
+        this->play_for_x_ticks--;
 }
 
 bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {

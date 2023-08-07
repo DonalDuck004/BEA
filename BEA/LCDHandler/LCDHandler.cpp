@@ -50,10 +50,10 @@ void LCDHandler::RemoveMessageAt(int at){
             this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
         else if (at == 0)
             this->messages = (BaseLCDMessage**)realloc(this->messages + sizeof(BaseLCDMessage*), sizeof(BaseLCDMessage*) * this->messages_count);
-        else {
+        else
             for (int i = at; i < this->messages_count; i++)
                 this->messages[i] = this->messages[i + 1];
-        }
+
         this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
     }
 }
@@ -93,6 +93,7 @@ void LCDHandler::DoUpdate(){
     if (this->messages_count != 0){
         BEAHandler::DoUpdate();
 
+#ifdef LCD_LEGACY_UPDATER
         for(int i = 0; i < this->messages_count; i++){
             if (!this->messages[i]->enabled)
                 continue;
@@ -103,6 +104,35 @@ void LCDHandler::DoUpdate(){
                 i--;
             }
         }
+#else
+        bool any_silent;
+        LCDMessageGroup msgs = this->GetLastMessagesForRows(any_silent);
+        if (any_silent) {
+            bool tmp;
+
+            for (int i = 0; i < this->messages_count; i++) {
+                if (!this->messages[i]->enabled || !this->messages[i]->GetListForSilent())
+                    continue;
+                tmp = false;
+
+                for (int j = 0; j < msgs.count; j++) {
+                    if (msgs.messages[j] == this->messages[i]) {
+                        tmp = true;
+                        break;
+                    }
+                }
+
+                if (!tmp)
+                    this->messages[i]->DoSilentUpdate(this);
+            }
+        }
+
+        for (int i = 0; i < msgs.count; i++) {
+
+            if (msgs.messages[i]->DoUpdate(this))
+                this->RemoveMessageByRef(msgs.messages[i]); // TODO FIX CRASH 
+        }
+#endif
     }
 }
 
@@ -128,14 +158,28 @@ bool LCDHandler::RemoveMessagesAtRow(int row) {
     return deleted;
 }
 
-bool LCDHandler::RemoveMessagesWithFlags(byte flags, bool strict) {
+bool LCDHandler::RemoveMessageByRef(BaseLCDMessage* msg) {
+    for (int i = 0; i < this->messages_count; i++) {
+        if (this->messages[i] == msg) {
+            this->RemoveMessageAt(i);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool LCDHandler::RemoveMessagesWithFlags(byte flags, bool strict, int limit) {
     bool deleted = false;
 
     for (int i = 0; i < this->messages_count; i++) {
-        if (CheckFlags(this->messages[i]->user_flags, flags, strict)) {
+        if (CheckFlags(this->messages[i]->GetFlags(), flags, strict)) {
             this->RemoveMessageAt(i);
             i--;
             deleted = true;
+
+            if (--limit == 0)
+                break;
         }
     }
 
@@ -166,7 +210,6 @@ LCDMessageGroup LCDHandler::GetMessagesAtRow(int row) {
     return out;
 }
 
-
 LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
     int found = 0;
     LCDMessageGroup out;
@@ -174,7 +217,7 @@ LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
     out.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * out.count);
 
     for (int i = 0; i < this->messages_count; i++) {
-        if (CheckFlags(this->messages[i]->user_flags, flags, strict)) {
+        if (CheckFlags(this->messages[i]->GetFlags(), flags, strict)) {
 
             if (++found > out.count)
                 out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * ++out.count);
@@ -183,6 +226,41 @@ LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
         }
     }
 
+    if (out.count != found)
+    {
+        out.count = found;
+        out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
+    }
+
+    return out;
+}
+
+LCDMessageGroup LCDHandler::GetLastMessagesForRows(bool &any_silent) {
+    int found = 0;
+    LCDMessageGroup out;
+    out.count = this->GetRows();
+
+    short* indexes = (short*)malloc(sizeof(short) * out.count);
+    memset(indexes, -1, sizeof(short) * out.count);
+
+    for (int i = 0; i < this->messages_count; i++) {
+        if (this->messages[i]->enabled) {
+            indexes[this->messages[i]->GetAtRow()] = i;
+            any_silent = any_silent || this->messages[i]->GetListForSilent();
+        }
+    }
+
+
+    out.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * out.count);
+
+    for (int i = 0; i < out.count; i++) {
+        if (indexes[i] == -1)
+            continue;
+
+        out.messages[found++] = this->messages[indexes[i]];
+    }
+
+    free(indexes);
     if (out.count != found)
     {
         out.count = found;

@@ -45,12 +45,16 @@ class LCDHandler : public BEAHandler{
 		BaseLCDMessage* GetMessageAt(int at);
 
 		LCDMessageGroup GetMessagesWithFlags(byte flags, bool strict = false);
+		
+		LCDMessageGroup GetLastMessagesForRows(bool &any_silent);
 
 		LCDMessageGroup GetMessagesAtRow(int row);
 		
 		bool RemoveMessagesAtRow(int row);
 
-		bool RemoveMessagesWithFlags(byte flags, bool strict = false);
+		bool RemoveMessageByRef(BaseLCDMessage* msg);
+
+		bool RemoveMessagesWithFlags(byte flags, bool strict = false, int limit = -1);
 
 		void RemoveMessages();
 
