@@ -9,34 +9,23 @@
 
 // #define SERIAL_DEBUG
 // #define DEBUG_IR_VALUE
-#define TROLL_BUILD
-#define MEM_DEBUG_BUILD
+// #define TROLL_BUILD
+// #define MEM_DEBUG_BUILD
+// #define MEM_EXTREME_DEBUG_BUILD
+
+#if defined(MEM_EXTREME_DEBUG_BUILD) && defined(MEM_DEBUG_BUILD)
+#   undef MEM_DEBUG_BUILD
+#endif
 
 #define BL_META_TRACK_NAME 1
 #define BL_META_SINGER 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V1.9"
+#define BL_DEVICE_NAME "BEA V1.10"
 
 #define BL_DISCONNECTED_BLINK_DELAY 500
 #define BL_CONNECTING_BLINK_DELAY 250
 #define BL_DISCONNECTING_BLINK_DELAY 750
-
-#define LCD_RS_PIN 19
-#define LCD_ENABLE_PIN 23
-#define LCD_D0_PIN 18
-#define LCD_D1_PIN 17
-#define LCD_D2_PIN 16
-#define LCD_D3_PIN 15
-
-#define LCD_ROWS 2
-#define LCD_COLS 16
-
-#define LCD_TICK_DELAY 750
-
-#define IR_PIN 34
-
-#define IR_TICK_DELAY 250
 
 #define DISCONNECTED_MESSAGE_R0 "Disconnesso"
 #define DISCONNECTED_MESSAGE_R0_STATIC true
@@ -76,14 +65,14 @@ static byte coffee[8] = {
   B01110,
 };
 
-const byte coffee_byte = 1;
+constexpr byte coffee_byte = 1;
 
 #endif
 
-static LCDHandler* lcd = new LCDHandler(new LiquidCrystal(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D0_PIN, LCD_D1_PIN, LCD_D2_PIN, LCD_D3_PIN), LCD_COLS, LCD_ROWS, LCD_TICK_DELAY);
+static LCDHandler* lcd = new LCDHandler();
 static BluetoothA2DPSink bl;
 static LedHandler* led = new LedHandler(BL_LED_PIN);
-static IRHandler* ir = new IRHandler(IR_PIN, IR_TICK_DELAY);
+static IRHandler* ir = new IRHandler();
 
 
 inline int DecimalLength(int n) {
@@ -139,11 +128,16 @@ void DisplayHeap() {
 
     int allocated_heap_kb = ((float)allocated_heap) / 1024;
     int total_heap_kb = ((float)total_heap) / 1024;
-    
-    LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff, 3);
+#ifdef MEM_EXTREME_DEBUG_BUILD
+    constexpr int dispaly_time = 1;
+#else
+    constexpr int dispaly_time = 3;
+#endif
+
+    LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff, dispaly_time);
     buff = (char*)malloc(sizeof(char) * (10 + DecimalLength(allocated_heap_kb) + DecimalLength(total_heap_kb)));
     sprintf(buff, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
-    LCDMessageStaticText* msg2 = new LCDMessageStaticText(0, buff, 3);
+    LCDMessageStaticText* msg2 = new LCDMessageStaticText(0, buff, dispaly_time);
     msg1->SetFlags(HEAP_ID);
     msg2->SetFlags(HEAP_ID);
     lcd->RemoveMessagesWithFlags(HEAP_ID, true, 2);
@@ -152,7 +146,6 @@ void DisplayHeap() {
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
-    bool ret = true;
    
 #ifdef DEBUG_IR_VALUE
     char* tmp = (char*)malloc(4 * sizeof(char));
@@ -160,18 +153,19 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
     lcd->AddMessage(new LCDMessageStaticText(1, tmp, 3));
 #endif
 
+
 #if defined(TROLL_BUILD) || defined(MEM_DEBUG_BUILD)
+    bool ret = true;
+#   ifdef TROLL_BUILD
     char* buff_r0 = NULL;
     char* buff_r1 = NULL;
-#endif
 
-#ifdef TROLL_BUILD
     static int last = -1;
     int val;
-#endif
+#   endif
 
     switch (cmd) {
-#ifdef TROLL_BUILD
+#   ifdef TROLL_BUILD
         case IR_SPARA_STRONZATA:
             if (lcd->RemoveMessagesWithFlags(TROLL_R0_ID, true, 1))
                 lcd->RemoveMessagesWithFlags(TROLL_R1_ID, true, 1);
@@ -215,17 +209,23 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
                 lcd->AddMessage((new LCDMessageStaticText(1, buff_r1, 6, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R1_ID));
 
             break;
-#endif
-#ifdef MEM_DEBUG_BUILD
+#   endif
+#   ifdef MEM_DEBUG_BUILD
         case IR_HEAP_DEBUG:
             DisplayHeap();;
             break;
-#endif
+#   endif
         default:
             ret = false;
     }
 
-    if (!bl.is_connected() || ret)
+    if (ret)
+        return;
+
+#endif
+
+
+    if (!bl.is_connected())
         return;
 
     int current_vol = ((float)bl.get_volume() / BL_MAX_AUDIO * 100) / 10 * 10;
@@ -364,7 +364,12 @@ void setup() {
 }
 
 void loop() {
+#ifndef MEM_EXTREME_DEBUG_BUILD
     lcd->Tick();
     led->Tick();
     ir->Tick();
+#else
+   if (lcd->Tick())
+       DisplayHeap();
+#endif
 }

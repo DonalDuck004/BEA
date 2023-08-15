@@ -6,7 +6,36 @@
 #include "../string_utilies/string_utilies.hpp"
 #include "../BEAHandler/BEAHandler.hpp"
 
-#define LCDHANDLER_GROUP_BASE_BUFF 2
+#ifndef LCD_RS_PIN
+#	define LCD_RS_PIN 19
+#endif
+#ifndef LCD_ENABLE_PIN
+#	define LCD_ENABLE_PIN 23
+#endif
+#ifndef LCD_D0_PIN
+#	define LCD_D0_PIN 18
+#endif
+#ifndef LCD_D1_PIN
+#	define LCD_D1_PIN 17
+#endif
+#ifndef LCD_D2_PIN
+#	define LCD_D2_PIN 16
+#endif
+#ifndef LCD_D3_PIN
+#	define LCD_D3_PIN 15
+#endif
+#ifndef LCD_ROWS
+#	define LCD_ROWS 2
+#endif
+#ifndef LCD_COLS
+#	define LCD_COLS 16
+#endif
+#ifndef LCD_TICK_DELAY
+#	define LCD_TICK_DELAY 750
+#endif
+#ifndef LCDHANDLER_GROUP_BASE_BUFF
+#	define LCDHANDLER_GROUP_BASE_BUFF 2
+#endif
 
 class BaseLCDMessage;
 
@@ -30,7 +59,9 @@ class LCDHandler : public BEAHandler{
 		void DoUpdate() override;
 
 	public:
-		LCDHandler(LiquidCrystal* lcd, int cols = 16, int rows = 2, int update_delay = 1000);
+		LCDHandler(LiquidCrystal* lcd, int cols = LCD_COLS, int rows = LCD_ROWS, int update_delay = LCD_TICK_DELAY);
+
+		LCDHandler(int cols = LCD_COLS, int rows = LCD_ROWS, int update_delay = LCD_TICK_DELAY);
 
 		~LCDHandler();
 

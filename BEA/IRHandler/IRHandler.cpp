@@ -1,6 +1,6 @@
 #include "IRHandler.hpp"
 
-IRHandler::IRHandler(int pin, IRHandlerCBK* cbk, int update_delay) : BEAHandler(update_delay){
+IRHandler::IRHandler(IRHandlerCBK* cbk, int pin, int update_delay) : BEAHandler(update_delay){
     this->ir = new IRrecv(pin);
     this->ir->enableIRIn();
     this->cbk = cbk;
@@ -28,13 +28,15 @@ void IRHandler::DoUpdate() {
         this->cbk(this, this->ir->decodedIRData.command);
 }
 
-void IRHandler::Tick() {
+bool IRHandler::Tick() {
     if (!this->ShouldTick())
-        return;
+        return false;
 
     if (this->ir->decode()) {
         BEAHandler::DoUpdate();
         this->ir->resume();
         this->DoUpdate();
     }
+
+    return true;
 }

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #ifndef BEAHANDLER_DEAFULT_PICK_DELAY
-	#define BEAHANDLER_DEAFULT_UPDATE_DELAY 750
+#	define BEAHANDLER_DEAFULT_UPDATE_DELAY 750
 #endif
 
 class BEAHandler {
@@ -14,7 +14,7 @@ class BEAHandler {
 		virtual bool ShouldTick();
 
 	public:
-		virtual void Tick();
+		virtual bool Tick();
 
 		BEAHandler(int pick_delay = BEAHANDLER_DEAFULT_UPDATE_DELAY);
 };

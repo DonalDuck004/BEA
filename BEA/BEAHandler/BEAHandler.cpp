@@ -13,8 +13,12 @@ bool BEAHandler::ShouldTick() {
 	return millis() - this->last_update >= this->update_delay;
 }
 
-void BEAHandler::Tick() {
-	if (this->ShouldTick())
+bool BEAHandler::Tick() {
+	if (this->ShouldTick()) {
 		this->DoUpdate();
+		return true;
+	}
+
+	return false;
 }
 

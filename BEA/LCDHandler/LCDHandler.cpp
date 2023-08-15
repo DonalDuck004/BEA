@@ -11,6 +11,19 @@ LCDHandler::LCDHandler(LiquidCrystal* lcd, int cols, int rows, int update_delay)
     lcd->clear();
 }
 
+LCDHandler::LCDHandler(int cols, int rows, int update_delay) : BEAHandler(update_delay) {
+    this->lcd = new LiquidCrystal(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D0_PIN, LCD_D1_PIN, LCD_D2_PIN, LCD_D3_PIN), cols, rows, update_delay;
+    this->cols = cols;
+    this->rows = rows;
+    this->messages = NULL;
+    this->messages_count = 0;
+
+    lcd->begin(cols, rows);
+    lcd->clear();
+}
+
+
+
 LCDHandler::~LCDHandler(){
   this->RemoveMessages();
 }
@@ -132,6 +145,8 @@ void LCDHandler::DoUpdate(){
             if (msgs.messages[i]->DoUpdate(this))
                 this->RemoveMessageByRef(msgs.messages[i]); // TODO FIX CRASH 
         }
+
+        free(msgs.messages);
 #endif
     }
 }

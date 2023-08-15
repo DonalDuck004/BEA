@@ -4,6 +4,12 @@
 #define USE_IRREMOTE_HPP_AS_PLAIN_INCLUDE
 #include <IRremote.hpp>
 
+#ifndef IR_PIN
+#   define IR_PIN 34
+#endif
+#ifndef IR_TICK_DELAY
+#   define IR_TICK_DELAY 250
+#endif
 class IRHandler;
 
 typedef void IRHandlerCBK(IRHandler*, uint16_t);
@@ -19,8 +25,8 @@ class IRHandler : public BEAHandler{
     public:
         bool playing = false;
 
-        IRHandler(int pin, IRHandlerCBK cbk, int update_delay = 750);
-        IRHandler(int pin, int update_delay = 750);
+        IRHandler(IRHandlerCBK cbk, int pin = IR_PIN, int update_delay = IR_TICK_DELAY);
+        IRHandler(int pin = IR_PIN, int update_delay = IR_TICK_DELAY);
 
         ~IRHandler();
 
@@ -28,6 +34,6 @@ class IRHandler : public BEAHandler{
        
         void SetCallback(IRHandlerCBK cbk);
 
-        void Tick() override;
+        bool Tick() override;
 };
 
