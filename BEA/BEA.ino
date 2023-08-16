@@ -10,8 +10,8 @@
 // #define SERIAL_DEBUG
 // #define DEBUG_IR_VALUE
 // #define TROLL_BUILD
-// #define MEM_DEBUG_BUILD
-// #define MEM_EXTREME_DEBUG_BUILD
+#define MEM_DEBUG_BUILD
+#define MEM_EXTREME_DEBUG_BUILD
 
 #if defined(MEM_EXTREME_DEBUG_BUILD) && defined(MEM_DEBUG_BUILD)
 #   undef MEM_DEBUG_BUILD
@@ -21,7 +21,7 @@
 #define BL_META_SINGER 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V1.10"
+#define BL_DEVICE_NAME "BEA V2.0A"
 
 #define BL_DISCONNECTED_BLINK_DELAY 500
 #define BL_CONNECTING_BLINK_DELAY 250
@@ -69,6 +69,94 @@ constexpr byte coffee_byte = 1;
 
 #endif
 
+/*
+class StaticBuffersBluetoothA2DPSink : public BluetoothA2DPSink {
+protected:
+    uint8_t* meta_buff = nullptr;
+
+    virtual void app_alloc_meta_buffer(esp_avrc_ct_cb_param_t* param) override
+    {
+        return;
+        if (meta_buff == nullptr)
+            this->meta_buff = (uint8_t*)malloc(sizeof(uint8_t) * 256);
+        ESP_LOGD(BT_AV_TAG, "%s", __func__);
+        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(param);
+        int cut_at = min(256, rc->meta_rsp.attr_length);
+        memcpy(this->meta_buff, rc->meta_rsp.attr_text, cut_at);
+        meta_buff[cut_at] = 0;
+
+        rc->meta_rsp.attr_text = meta_buff;
+    }
+
+    virtual void av_hdl_avrc_evt(uint16_t event, void* p_param) override
+    {
+        ESP_LOGD(BT_AV_TAG, "%s evt %d", __func__, event);
+        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(p_param);
+        switch (event) {
+        case ESP_AVRC_CT_CONNECTION_STATE_EVT: {
+            ESP_LOGI(BT_AV_TAG, "AVRC conn_state evt: state %d, [%s]", rc->conn_stat.connected, to_str(rc->conn_stat.remote_bda));
+
+#ifdef ESP_IDF_4
+            if (rc->conn_stat.connected) {
+                av_new_track();
+                // get remote supported event_ids of peer AVRCP Target
+                esp_avrc_ct_send_get_rn_capabilities_cmd(APP_RC_CT_TL_GET_CAPS);
+            }
+            else {
+                // clear peer notification capability record
+                s_avrc_peer_rn_cap.bits = 0;
+            }
+#else
+            if (rc->conn_stat.connected) {
+                av_new_track();
+            }
+#endif
+            break;
+
+        }
+        case ESP_AVRC_CT_PASSTHROUGH_RSP_EVT: {
+            ESP_LOGI(BT_AV_TAG, "AVRC passthrough rsp: key_code 0x%x, key_state %d", rc->psth_rsp.key_code, rc->psth_rsp.key_state);
+            break;
+        }
+        case ESP_AVRC_CT_METADATA_RSP_EVT: {
+            ESP_LOGI(BT_AV_TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
+            // call metadata callback if available
+            if (avrc_metadata_callback != nullptr) {
+                avrc_metadata_callback(rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
+            };
+            break;
+        }
+        case ESP_AVRC_CT_CHANGE_NOTIFY_EVT: {
+            //ESP_LOGI(BT_AV_TAG, "AVRC event notification: %d, param: %d", (int)rc->change_ntf.event_id, (int)rc->change_ntf.event_parameter);
+            av_notify_evt_handler(rc->change_ntf.event_id, rc->change_ntf.event_parameter);
+            break;
+        }
+        case ESP_AVRC_CT_REMOTE_FEATURES_EVT: {
+            ESP_LOGI(BT_AV_TAG, "AVRC remote features %x", rc->rmt_feats.feat_mask);
+            break;
+        }
+
+#ifdef ESP_IDF_4
+
+        case ESP_AVRC_CT_GET_RN_CAPABILITIES_RSP_EVT: {
+            ESP_LOGI(BT_AV_TAG, "remote rn_cap: count %d, bitmask 0x%x", rc->get_rn_caps_rsp.cap_count,
+                rc->get_rn_caps_rsp.evt_set.bits);
+            s_avrc_peer_rn_cap.bits = rc->get_rn_caps_rsp.evt_set.bits;
+            av_new_track();
+            //bt_av_playback_changed();
+            //bt_av_play_pos_changed();
+            break;
+        }
+
+#endif
+
+        default:
+            ESP_LOGE(BT_AV_TAG, "%s unhandled evt %d", __func__, event);
+            break;
+        }
+    }
+};*/
+
 static LCDHandler* lcd = new LCDHandler();
 static BluetoothA2DPSink bl;
 static LedHandler* led = new LedHandler(BL_LED_PIN);
@@ -109,40 +197,49 @@ void ProcessProgressBar(int current_vol) {
 }
 
 void DisplayHeap() {
-    const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
-                                      // 2 for || 4 for 000%
-   
-    uint32_t total_heap = ESP.getHeapSize();
-    uint32_t allocated_heap = total_heap - ESP.getFreeHeap();
-    int percentage = map(allocated_heap, 0, total_heap, 0, 100);
-    int filled = map(allocated_heap, 0, total_heap, 0, bar_size);
-    char* buff = (char*)malloc(sizeof(char) * (LCD_COLS + 1));
-    char* str_number = (char*)malloc(sizeof(char) * 5); // TODO Write directly to buff
-    sprintf(str_number, "%3d%%", percentage);
-    buff[0] = '|';
-    buff[bar_size + 1] = '|';
-    memmove(buff + bar_size + 2, str_number, strlen(str_number));
-    memset(buff + 1, '#', filled);
-    memset(buff + filled + 1, '-', bar_size - filled);
-    free(str_number);
-
-    int allocated_heap_kb = ((float)allocated_heap) / 1024;
-    int total_heap_kb = ((float)total_heap) / 1024;
 #ifdef MEM_EXTREME_DEBUG_BUILD
-    constexpr int dispaly_time = 1;
+    constexpr int display_time = 2;
 #else
     constexpr int dispaly_time = 3;
 #endif
+    const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
+                                      // 2 for || 4 for 000%
+    static char* buff_r0 = (char*)malloc(sizeof(char) * LCD_COLS);
+    static char* buff_r1 = (char*)malloc(sizeof(char) * LCD_COLS);
 
-    LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff, dispaly_time);
-    buff = (char*)malloc(sizeof(char) * (10 + DecimalLength(allocated_heap_kb) + DecimalLength(total_heap_kb)));
-    sprintf(buff, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
-    LCDMessageStaticText* msg2 = new LCDMessageStaticText(0, buff, dispaly_time);
-    msg1->SetFlags(HEAP_ID);
-    msg2->SetFlags(HEAP_ID);
-    lcd->RemoveMessagesWithFlags(HEAP_ID, true, 2);
-    lcd->AddMessage(msg1);
-    lcd->AddMessage(msg2);
+    static bool first_run = true;
+
+    memset(buff_r0, 0, LCD_COLS);
+    memset(buff_r1, 0, LCD_COLS);
+    uint32_t total_heap = ESP.getHeapSize();
+    uint32_t allocated_heap = total_heap - ESP.getFreeHeap();
+
+
+    int allocated_heap_kb = ((float)allocated_heap) / 1024;
+    int total_heap_kb = ((float)total_heap) / 1024;
+    sprintf(buff_r0, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
+
+    int percentage = map(allocated_heap, 0, total_heap, 0, 100);
+    int filled = map(allocated_heap, 0, total_heap, 0, bar_size);
+    sprintf(buff_r1 + bar_size + 2, "%3d%%", percentage);
+    buff_r1[0] = '|';
+    buff_r1[bar_size + 1] = '|';
+    memset(buff_r1 + 1, '#', filled);
+    memset(buff_r1 + filled + 1, '-', bar_size - filled);
+
+    static LCDMessageStaticText* msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
+    static LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
+    
+    if (first_run) {
+        first_run = false;
+        msg0->SetFlags(HEAP_ID);
+        msg1->SetFlags(HEAP_ID);
+        lcd->AddMessage(msg0);
+        lcd->AddMessage(msg1);
+    } else {
+        msg0->Reset();
+        msg1->Reset();
+    }
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
@@ -195,8 +292,6 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
                     buff_r1 = "Sniffer         ";
                     break;
                 case 4:
-                    break;
-                    // TODO FIX
                     lcd->AddMessage((new LCDMessageText(0, "zio mattone, zio yogurt, zio banana", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
                     lcd->AddMessage((new LCDMessageText(1, "Sono tutti zii ma diverse categorie", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R1_ID));
                     break;
@@ -266,6 +361,7 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
 }
 
 void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
+    return;
     if (meta_type == BL_META_TRACK_NAME || meta_type == BL_META_SINGER) {
         char* msg = str_copy((char*)meta);
         if (meta_type == BL_META_TRACK_NAME) {
@@ -279,7 +375,7 @@ void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
         else 
             lcd_msg = new LCDMessageText(meta_type - 1, msg);
 
-        lcd->AddMessage(lcd_msg);
+        // lcd->AddMessage(lcd_msg);
     }
 
 #ifdef SERIAL_DEBUG
@@ -291,13 +387,11 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
     if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTED) {
         ir->DeviceConnected();
         led->SetOn();
-    }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
+    } else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
         lcd->RemoveMessages();
         SetDisconnectedMessage();
         led->SetDelay(BL_DISCONNECTED_BLINK_DELAY);
-    }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING)
+    } else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING)
         led->SetDelay(BL_CONNECTING_BLINK_DELAY);
     else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTING)
         led->SetDelay(BL_DISCONNECTING_BLINK_DELAY);
@@ -312,16 +406,22 @@ void SetDisconnectedMessage() {
     else
         lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
     lcd->AddMessage(lcd_msg);
-
+    lcd->GetRaw()->setCursor(0, 0);
+    lcd->GetRaw()->print("Passed clearall1");
+    delay(5000);
     if (DISCONNECTED_MESSAGE_R1)
         lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
     else
         lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
 
-    lcd->AddMessage(lcd_msg);
+    lcd->AddMessage(lcd_msg); // CRASH HERE
+    lcd->GetRaw()->setCursor(0, 0);
+    lcd->GetRaw()->print("Passed clearall2");
+    delay(5000);
 }
 
 void setup() {
+
 #ifdef SERIAL_DEBUG
     Serial.begin(9600);
     Serial.write("Test");

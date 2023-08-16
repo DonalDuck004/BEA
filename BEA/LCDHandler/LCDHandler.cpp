@@ -4,25 +4,25 @@ LCDHandler::LCDHandler(LiquidCrystal* lcd, int cols, int rows, int update_delay)
     this->lcd = lcd;
     this->cols = cols;
     this->rows = rows;
-    this->messages = NULL;
+    this->messages = nullptr;
     this->messages_count = 0;
+    this->space_for_messages = 0;
 
     lcd->begin(cols, rows);
     lcd->clear();
 }
 
 LCDHandler::LCDHandler(int cols, int rows, int update_delay) : BEAHandler(update_delay) {
-    this->lcd = new LiquidCrystal(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D0_PIN, LCD_D1_PIN, LCD_D2_PIN, LCD_D3_PIN), cols, rows, update_delay;
+    this->lcd = new LiquidCrystal(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D0_PIN, LCD_D1_PIN, LCD_D2_PIN, LCD_D3_PIN);
     this->cols = cols;
     this->rows = rows;
-    this->messages = NULL;
+    this->messages = nullptr;
     this->messages_count = 0;
+    this->space_for_messages = 0;
 
     lcd->begin(cols, rows);
     lcd->clear();
 }
-
-
 
 LCDHandler::~LCDHandler(){
   this->RemoveMessages();
@@ -35,16 +35,19 @@ int LCDHandler::GetCols(){
 int LCDHandler::GetRows(){
     return this->rows;
 }
-    
-    
+
 void LCDHandler::AddMessage(BaseLCDMessage* msg){
     this->messages_count++;
-    if (this->messages == NULL)
-        this->messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*));
-    else
-        this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
-
+    if (this->messages == nullptr) {
+        this->messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * LCDHANDLER_INTERNAL_MESSAGES_BUFF);
+        this->space_for_messages = LCDHANDLER_INTERNAL_MESSAGES_BUFF;
+    }else if (this->space_for_messages == this->messages_count - 1) {
+        this->space_for_messages += LCDHANDLER_INTERNAL_EXTRA_MESSAGES_BUFF;
+        this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->space_for_messages);
+    }
+    
     this->messages[this->messages_count - 1] = msg;
+    this->SortMessages();
 }
     
 void LCDHandler::RemoveMessageAt(int at){
@@ -52,39 +55,102 @@ void LCDHandler::RemoveMessageAt(int at){
         return;
 
     this->messages_count--;
-    if (this->messages_count == 0){
-        delete this->messages[0];
-        free(this->messages);
-        this->messages = NULL;
-    }else{
-        delete this->messages[at];
+    /*ClearRow(this->messages[at]->GetAtRow());
+    lcd->setCursor(0, this->messages[at]->GetAtRow());
+    lcd->print(this->messages[at]->GetFreeFlags());
+    lcd->print(((BaseLCDMessageText*)this->messages[at])->TMPGetText());*/
+    delete this->messages[at];
+    this->messages[at] = nullptr;
+    if (this->messages_count == 0)
+        return;
 
-        if (at == this->messages_count)
-            this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
-        else if (at == 0)
-            this->messages = (BaseLCDMessage**)realloc(this->messages + sizeof(BaseLCDMessage*), sizeof(BaseLCDMessage*) * this->messages_count);
-        else
-            for (int i = at; i < this->messages_count; i++)
-                this->messages[i] = this->messages[i + 1];
+    for (int i = at; i < this->messages_count; i++)
+        this->messages[i] = this->messages[i + 1];
+}
 
-        this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
-    }
+void LCDHandler::ReallocBuff() {
+    if (this->messages_count == this->space_for_messages)
+        return;
+
+    this->space_for_messages = this->messages_count;
+    this->messages = (BaseLCDMessage**)realloc(this->messages, sizeof(BaseLCDMessage*) * this->messages_count);
 }
 
 BaseLCDMessage* LCDHandler::GetMessageAt(int at) {
     if (this->messages_count <= at || at < 0)
-        return NULL;
+        return nullptr;
 
     return this->messages[at];
 }
     
 void LCDHandler::RemoveMessages(){
-    if (this->messages == NULL)
+    if (this->messages == nullptr)
         return;
 
-    this->messages_count = 0;
-    delete[] this->messages;
-    this->messages = NULL;
+    int original_count = this->messages_count;
+    for (int i = this->messages_count - 1; i >= 0; i--)
+    {
+        if (this->messages[i]->GetFreeFlags() != LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT)
+        {
+            delete this->messages[i];
+            this->messages[i] = nullptr;
+            this->messages_count--;
+        }
+    }
+
+    this->SortMessages(original_count);
+}
+
+void LCDHandler::SortMessages(int messages_count) {
+    if (messages_count == -1) 
+        messages_count = this->messages_count;
+    else if (messages_count == -2)
+        messages_count = this->space_for_messages;
+
+    if (messages_count == 0)
+        return;
+    if (messages_count == 1) {
+        for (int i = 0; i < messages_count; i++) {
+            if (this->messages[i] != nullptr) {
+                this->messages[0] = this->messages[i];
+                this->messages[i] = nullptr;
+                break;
+            }
+        }
+
+        return;
+    }
+    lcd->clear();
+    lcd->setCursor(0, 0);
+    lcd->print("Begin");
+    delay(5000);
+
+    BaseLCDMessage* tmp;
+    for (int i = 0; i < messages_count - 1; i++) {
+        for (int j = 0; j < messages_count - i - 1; j++) {
+            if (this->messages[j + 1] == nullptr)
+                continue;
+
+            if (this->messages[j] == nullptr || this->messages[j]->GetPriority() > this->messages[j + 1]->GetPriority())
+            {
+                tmp = this->messages[j];
+                this->messages[j] = this->messages[j + 1];
+                this->messages[j + 1] = tmp;
+            }
+        }
+    }
+
+    lcd->setCursor(0, 1);
+    char* x = (char*)malloc(3);
+    x[0] = 'd';
+    x[0] = ' ';
+    x[1] = 0;
+    static int c = 0;
+    lcd->print("Passe");
+    lcd->print(x);
+    lcd->print(++c);
+    delay(10000);
+    lcd->print(x);
 }
     
 void LCDHandler::ClearAll(){
@@ -99,58 +165,10 @@ void LCDHandler::ForceWrite(char* text, int at, int col){
     
 void LCDHandler::ClearRow(int at){
     this->lcd->setCursor(0, at);
-    this->lcd->print(str_repeat(" ", this->cols));
+    static char* tmp = str_repeat(" ", this->cols);
+    this->lcd->print(tmp);
 }
     
-void LCDHandler::DoUpdate(){
-    if (this->messages_count != 0){
-        BEAHandler::DoUpdate();
-
-#ifdef LCD_LEGACY_UPDATER
-        for(int i = 0; i < this->messages_count; i++){
-            if (!this->messages[i]->enabled)
-                continue;
-
-            if (this->messages[i]->DoUpdate(this)){
-                this->ClearRow(this->messages[i]->GetAtRow());
-                this->RemoveMessageAt(i);
-                i--;
-            }
-        }
-#else
-        bool any_silent;
-        LCDMessageGroup msgs = this->GetLastMessagesForRows(any_silent);
-        if (any_silent) {
-            bool tmp;
-
-            for (int i = 0; i < this->messages_count; i++) {
-                if (!this->messages[i]->enabled || !this->messages[i]->GetListForSilent())
-                    continue;
-                tmp = false;
-
-                for (int j = 0; j < msgs.count; j++) {
-                    if (msgs.messages[j] == this->messages[i]) {
-                        tmp = true;
-                        break;
-                    }
-                }
-
-                if (!tmp)
-                    this->messages[i]->DoSilentUpdate(this);
-            }
-        }
-
-        for (int i = 0; i < msgs.count; i++) {
-
-            if (msgs.messages[i]->DoUpdate(this))
-                this->RemoveMessageByRef(msgs.messages[i]); // TODO FIX CRASH 
-        }
-
-        free(msgs.messages);
-#endif
-    }
-}
-
 LiquidCrystal* LCDHandler::GetRaw() {
     return this->lcd;
 }
@@ -250,37 +268,86 @@ LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
     return out;
 }
 
-LCDMessageGroup LCDHandler::GetLastMessagesForRows(bool &any_silent) {
-    int found = 0;
-    LCDMessageGroup out;
-    out.count = this->GetRows();
+void LCDHandler::GetLastMessagesForRows(bool& any_silent, LCDMessageGroup& output) {
+    output.count = this->GetRows();
 
-    short* indexes = (short*)malloc(sizeof(short) * out.count);
-    memset(indexes, -1, sizeof(short) * out.count);
+    if (output.messages == nullptr) {
+        output.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * output.count);
+        output.buff_size = output.count;
+    } else if (output.buff_size < output.count) {
+        output.messages = (BaseLCDMessage**)realloc(output.messages, sizeof(BaseLCDMessage*) * output.count);
+        output.buff_size = output.count;
+    }
+
+    memset(output.messages, -1, sizeof(BaseLCDMessage*) * output.buff_size);
 
     for (int i = 0; i < this->messages_count; i++) {
         if (this->messages[i]->enabled) {
-            indexes[this->messages[i]->GetAtRow()] = i;
+            output.messages[this->messages[i]->GetAtRow()] = this->messages[i];
             any_silent = any_silent || this->messages[i]->GetListForSilent();
         }
     }
+}
 
-
-    out.messages = (BaseLCDMessage**)malloc(sizeof(BaseLCDMessage*) * out.count);
-
-    for (int i = 0; i < out.count; i++) {
-        if (indexes[i] == -1)
-            continue;
-
-        out.messages[found++] = this->messages[indexes[i]];
-    }
-
-    free(indexes);
-    if (out.count != found)
-    {
-        out.count = found;
-        out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
-    }
+LCDMessageGroup LCDHandler::GetLastMessagesForRows(bool& any_silent) {
+    LCDMessageGroup out;
+    this->GetLastMessagesForRows(any_silent, out);
 
     return out;
 }
+
+void LCDHandler::DoUpdate() {
+    if (this->messages_count != 0) {
+        BEAHandler::DoUpdate();
+
+#ifdef LCD_LEGACY_UPDATER
+        for (int i = 0; i < this->messages_count; i++) {
+            if (!this->messages[i]->enabled)
+                continue;
+
+            if (this->messages[i]->DoUpdate(this)) {
+                this->ClearRow(this->messages[i]->GetAtRow());
+                this->RemoveMessageAt(i);
+                i--;
+            }
+        }
+#else
+        bool any_silent;
+        static LCDMessageGroup msgs;
+        this->GetLastMessagesForRows(any_silent, msgs);
+
+        if (any_silent) {
+            bool tmp;
+
+            for (int i = 0; i < this->messages_count; i++) {
+                if (!(this->messages[i]->enabled && this->messages[i]->GetListForSilent()))
+                    continue;
+                tmp = false;
+
+                for (int j = 0; j < msgs.count; j++) {
+                    if (msgs.messages[j] == this->messages[i]) {
+                        tmp = true;
+                        break;
+                    }
+                }
+
+                if (!tmp)
+                    this->messages[i]->DoSilentUpdate(this);
+            }
+        }
+
+        for (int i = 0; i < msgs.count; i++) {
+            if (msgs.messages[i]->DoUpdate(this)) {
+                if (msgs.messages[i]->GetFreeFlags() == LCDMessageFreeOpt::PERSISTENT)
+                    msgs.messages[i]->enabled = false;
+                else
+                    this->RemoveMessageByRef(msgs.messages[i]);
+            }
+        }
+
+        msgs = {};
+
+#endif
+    }
+}
+

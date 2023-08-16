@@ -36,12 +36,20 @@
 #ifndef LCDHANDLER_GROUP_BASE_BUFF
 #	define LCDHANDLER_GROUP_BASE_BUFF 2
 #endif
+#ifndef LCDHANDLER_INTERNAL_MESSAGES_BUFF
+#	define LCDHANDLER_INTERNAL_MESSAGES_BUFF 4
+#endif
+#ifndef LCDHANDLER_INTERNAL_EXTRA_MESSAGES_BUFF
+#	define LCDHANDLER_INTERNAL_EXTRA_MESSAGES_BUFF 2
+#endif
+
 
 class BaseLCDMessage;
 
 typedef struct {
-	BaseLCDMessage** messages;
-	int count = LCDHANDLER_GROUP_BASE_BUFF;
+	BaseLCDMessage** messages = nullptr;
+	int count = 0;
+	int buff_size = 0;
 } LCDMessageGroup;
 
 class LCDHandler : public BEAHandler{
@@ -51,12 +59,14 @@ class LCDHandler : public BEAHandler{
 		int rows;
 		int repeat_after;
 		int messages_count;
+		int space_for_messages;
 		BaseLCDMessage **messages;
 
 		static inline bool CheckFlags(int mf, int f, bool s);
 
 	protected:
 		void DoUpdate() override;
+		void SortMessages(int messages_count = -1);
 
 	public:
 		LCDHandler(LiquidCrystal* lcd, int cols = LCD_COLS, int rows = LCD_ROWS, int update_delay = LCD_TICK_DELAY);
@@ -77,7 +87,8 @@ class LCDHandler : public BEAHandler{
 
 		LCDMessageGroup GetMessagesWithFlags(byte flags, bool strict = false);
 		
-		LCDMessageGroup GetLastMessagesForRows(bool &any_silent);
+		LCDMessageGroup GetLastMessagesForRows(bool& any_silent);
+		void GetLastMessagesForRows(bool& any_silent, LCDMessageGroup& output);
 
 		LCDMessageGroup GetMessagesAtRow(int row);
 		
@@ -96,4 +107,6 @@ class LCDHandler : public BEAHandler{
 		void ClearRow(int at = 0);
 
 		LiquidCrystal* GetRaw();
+
+		void ReallocBuff();
 };
