@@ -64,6 +64,12 @@ BaseLCDMessageText::~BaseLCDMessageText() {
 		free(this->str);
 }
 
+void BaseLCDMessageText::Reset(bool recalculate_len) {
+    if (recalculate_len)
+        this->SetStrLen(strlen(this->str));
+
+    this->enabled = true;
+}
 
 LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op, int priority) :
     BaseLCDMessageText(at_row, str, free_op, priority) {
@@ -128,10 +134,10 @@ void LCDMessageStaticText::DoSilentUpdate(LCDHandler* lcd) {
         this->play_for_x_ticks--;
 }
 
-void LCDMessageStaticText::Reset() {
-    this->SetStrLen(strlen(this->str));
+
+void LCDMessageStaticText::Reset(bool recalculate_len) {
+    BaseLCDMessageText::Reset(recalculate_len);
     this->play_for_x_ticks = this->src_play_for_x_ticks;
-    this->enabled = true;
 }
 
 bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {

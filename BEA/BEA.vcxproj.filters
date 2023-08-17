@@ -14,37 +14,25 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{1cebfe60-5861-4fea-b188-76bf6f395ccb}</UniqueIdentifier>
+      <UniqueIdentifier>{0955eb73-ab96-4b8a-aa21-dc2ddcc53574}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly">
-      <UniqueIdentifier>{e2dce7c1-b933-47ac-a970-e46a5526ca90}</UniqueIdentifier>
+      <UniqueIdentifier>{0605712a-4765-4572-b301-6a84f4b77d00}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\core">
-      <UniqueIdentifier>{f6e22fa9-1c80-4e89-920a-1bf38c14dfc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\_micro-api-readonly\core\apps">
-      <UniqueIdentifier>{7109f617-eb5a-4fc4-9eb3-656ff67378d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\_micro-api-readonly\core\apps\sntp">
-      <UniqueIdentifier>{0030b93b-8324-4fc7-8776-d5672fba3234}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\_micro-api-readonly\core\libb64">
-      <UniqueIdentifier>{0d3186c9-d9b2-42e7-91d0-90fb4bde62f6}</UniqueIdentifier>
+      <UniqueIdentifier>{7afbe49a-4c2f-4e23-878b-704a4d98cf3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\libraries">
-      <UniqueIdentifier>{7c6e1cb6-c10d-420f-bb0b-5160d41dbaa3}</UniqueIdentifier>
+      <UniqueIdentifier>{2c5c29df-08ca-445f-afd7-7d7f9b5de7a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\libraries\LiquidCrystal">
-      <UniqueIdentifier>{94fce6b5-9d00-4304-bc4b-7321b40c2713}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\_micro-api-readonly\libraries\ESP32-A2DP-main">
-      <UniqueIdentifier>{17cdd934-4db4-4b46-996b-d72967044051}</UniqueIdentifier>
+      <UniqueIdentifier>{9abb6990-3f17-47c5-8f3b-2ca38d361684}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\libraries\IRremote">
-      <UniqueIdentifier>{37c87c61-cbec-47fc-b49e-f7c70702daa1}</UniqueIdentifier>
+      <UniqueIdentifier>{25d95b26-fc50-42bc-b3d8-289942b05ed6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\_micro-api-readonly\libraries\Arduino-IRremote-master">
-      <UniqueIdentifier>{700a5480-8993-4734-af16-f266bb0104be}</UniqueIdentifier>
+    <Filter Include="src\_micro-api-readonly\libraries\ESP32-A2DP-main">
+      <UniqueIdentifier>{f004e222-9e8d-4e19-a1e9-58ad34ce5f1e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -58,137 +46,14 @@
     <ClCompile Include="LCDHandler\LCDHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\base64.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClCompile Include="LCDHandler\LCDMessage.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\cbuf.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClCompile Include="IRHandler\IRHandler.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Esp.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-adc.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-bt.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-cpu.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-dac.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-gpio.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c-slave.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-ledc.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-matrix.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-misc.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-psram.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rgb-led.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rmt.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-sigmadelta.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-spi.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-time.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-timer.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-tinyusb.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-touch.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-uart.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FirmwareMSC.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\firmware_msc_fat.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FunctionalInterrupt.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HardwareSerial.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HWCDC.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPAddress.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPv6Address.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\main.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\MD5Builder.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Print.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\stdlib_noniso.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Stream.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\StreamString.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Tone.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USB.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBCDC.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBMSC.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_pulse.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_shift.c">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WMath.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WString.cpp">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClCompile Include="BEAHandler\BEAHandler.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.cpp">
       <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
@@ -208,15 +73,6 @@
     <ClCompile Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\SoundData.cpp">
       <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
     </ClCompile>
-    <ClCompile Include="LCDHandler\LCDMessage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IRHandler\IRHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BEAHandler\BEAHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.BEA.vsarduino.h">
@@ -234,173 +90,113 @@
     <ClInclude Include="LCDHandler\LCDHandler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Arduino.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClInclude Include="LCDHandler\LCDMessageFreeOpt.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\base64.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClInclude Include="IRHandler\IRHandler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\binary.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\cbuf.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Client.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\core_version.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Esp.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-adc.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-bt.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-cpu.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-dac.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-gpio.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c-slave.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-i2c.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-ledc.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-log.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-matrix.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-psram.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rgb-led.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-rmt.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-sigmadelta.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-spi.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-timer.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-tinyusb.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-touch.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal-uart.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp32-hal.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp8266-compat.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\esp_arduino_version.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FirmwareMSC.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\firmware_msc_fat.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\FunctionalInterrupt.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HardwareSerial.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\HWCDC.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPAddress.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\IPv6Address.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\MD5Builder.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\pgmspace.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Print.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Printable.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Server.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\stdlib_noniso.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Stream.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\StreamString.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\Udp.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USB.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBCDC.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\USBMSC.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WCharacter.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\wiring_private.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\WString.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\apps\sntp\sntp.h">
-      <Filter>src\_micro-api-readonly\core\apps\sntp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\libb64\cdecode.h">
-      <Filter>src\_micro-api-readonly\core\libb64</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\cores\esp32\libb64\cencode.h">
-      <Filter>src\_micro-api-readonly\core\libb64</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.9\variants\esp32\pins_arduino.h">
-      <Filter>src\_micro-api-readonly\core</Filter>
+    <ClInclude Include="BEAHandler\BEAHandler.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\src\LiquidCrystal.h">
       <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ac_LG.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ac_LG.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\digitalWriteFast.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRFeedbackLED.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRProtocol.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRProtocol.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRReceive.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRremote.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRremoteInt.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\IRSend.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_BangOlufsen.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_BoseWave.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Denon.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_DistanceWidthProtocol.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_FAST.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_JVC.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Kaseikyo.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Lego.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_LG.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_MagiQuest.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_NEC.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Others.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Pronto.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_RC5_RC6.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Samsung.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Sony.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\ir_Template.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\LongUnion.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\TinyIR.h">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\TinyIRReceiver.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\TinyIRSender.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Documents\Arduino\libraries\IRremote\src\private\IRTimer.hpp">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\A2DPVolumeControl.h">
       <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
@@ -426,19 +222,13 @@
     <ClInclude Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\src\SoundData.h">
       <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
     </ClInclude>
-    <ClInclude Include="LCDHandler\LCDMessageFreeOpt.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IRHandler\IRHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BEAHandler\BEAHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\keywords.txt">
       <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </Text>
+    <Text Include="..\..\..\Documents\Arduino\libraries\IRremote\keywords.txt">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
     </Text>
     <Text Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\CMakeLists.txt">
       <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>
@@ -450,6 +240,12 @@
   <ItemGroup>
     <None Include="..\..\..\AppData\Local\Arduino15\libraries\LiquidCrystal\library.properties">
       <Filter>src\_micro-api-readonly\libraries\LiquidCrystal</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\IRremote\library.json">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
+    </None>
+    <None Include="..\..\..\Documents\Arduino\libraries\IRremote\library.properties">
+      <Filter>src\_micro-api-readonly\libraries\IRremote</Filter>
     </None>
     <None Include="..\..\..\Documents\Arduino\libraries\ESP32-A2DP-main\library.properties">
       <Filter>src\_micro-api-readonly\libraries\ESP32-A2DP-main</Filter>

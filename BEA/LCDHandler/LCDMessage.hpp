@@ -42,7 +42,7 @@ class BaseLCDMessageText : public BaseLCDMessage {
 		~BaseLCDMessageText();
 		virtual bool DoUpdate(LCDHandler* lcd) = 0;
 		virtual void DoSilentUpdate(LCDHandler* lcd) {};
-		virtual void Reset() {};
+		virtual void Reset(bool recalculate_len = true);
 		void SetStrLen(int len);
 		char* TMPGetText() { return this->str; }
 
@@ -77,6 +77,6 @@ class LCDMessageStaticText : public BaseLCDMessageText {
 
 		bool DoUpdate(LCDHandler* lcd);
 		void DoSilentUpdate(LCDHandler* lcd);
-		void Reset();
+		void Reset(bool recalculate_len = true) override;
 };
 

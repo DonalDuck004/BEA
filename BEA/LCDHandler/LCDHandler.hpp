@@ -87,8 +87,9 @@ class LCDHandler : public BEAHandler{
 
 		LCDMessageGroup GetMessagesWithFlags(byte flags, bool strict = false);
 		
-		LCDMessageGroup GetLastMessagesForRows(bool& any_silent);
-		void GetLastMessagesForRows(bool& any_silent, LCDMessageGroup& output);
+		LCDMessageGroup GetLastMessagesForRows();
+
+		void GetLastMessagesForRows(LCDMessageGroup& output);
 
 		LCDMessageGroup GetMessagesAtRow(int row);
 		

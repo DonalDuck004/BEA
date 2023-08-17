@@ -11,7 +11,7 @@
 // #define DEBUG_IR_VALUE
 // #define TROLL_BUILD
 #define MEM_DEBUG_BUILD
-#define MEM_EXTREME_DEBUG_BUILD
+// #define MEM_EXTREME_DEBUG_BUILD
 
 #if defined(MEM_EXTREME_DEBUG_BUILD) && defined(MEM_DEBUG_BUILD)
 #   undef MEM_DEBUG_BUILD
@@ -21,7 +21,7 @@
 #define BL_META_SINGER 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V2.0A"
+#define BL_DEVICE_NAME "BEA V2.1A"
 
 #define BL_DISCONNECTED_BLINK_DELAY 500
 #define BL_CONNECTING_BLINK_DELAY 250
@@ -69,7 +69,6 @@ constexpr byte coffee_byte = 1;
 
 #endif
 
-/*
 class StaticBuffersBluetoothA2DPSink : public BluetoothA2DPSink {
 protected:
     uint8_t* meta_buff = nullptr;
@@ -155,10 +154,10 @@ protected:
             break;
         }
     }
-};*/
+};
 
 static LCDHandler* lcd = new LCDHandler();
-static BluetoothA2DPSink bl;
+static StaticBuffersBluetoothA2DPSink bl;
 static LedHandler* led = new LedHandler(BL_LED_PIN);
 static IRHandler* ir = new IRHandler();
 
@@ -200,14 +199,12 @@ void DisplayHeap() {
 #ifdef MEM_EXTREME_DEBUG_BUILD
     constexpr int display_time = 2;
 #else
-    constexpr int dispaly_time = 3;
+    constexpr int display_time = 3;
 #endif
-    const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
+    static const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
                                       // 2 for || 4 for 000%
     static char* buff_r0 = (char*)malloc(sizeof(char) * LCD_COLS);
     static char* buff_r1 = (char*)malloc(sizeof(char) * LCD_COLS);
-
-    static bool first_run = true;
 
     memset(buff_r0, 0, LCD_COLS);
     memset(buff_r1, 0, LCD_COLS);
@@ -227,11 +224,12 @@ void DisplayHeap() {
     memset(buff_r1 + 1, '#', filled);
     memset(buff_r1 + filled + 1, '-', bar_size - filled);
 
-    static LCDMessageStaticText* msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
-    static LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
+    static LCDMessageStaticText* msg0 = nullptr; 
+    static LCDMessageStaticText* msg1 = nullptr;
     
-    if (first_run) {
-        first_run = false;
+    if (msg0 == nullptr) {
+        msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
+        msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2); 
         msg0->SetFlags(HEAP_ID);
         msg1->SetFlags(HEAP_ID);
         lcd->AddMessage(msg0);
@@ -361,7 +359,6 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
 }
 
 void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
-    return;
     if (meta_type == BL_META_TRACK_NAME || meta_type == BL_META_SINGER) {
         char* msg = str_copy((char*)meta);
         if (meta_type == BL_META_TRACK_NAME) {
@@ -398,30 +395,32 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
 }
 
 void SetDisconnectedMessage() {
-    BaseLCDMessageText* lcd_msg;
-    lcd->ClearAll();
+    static BaseLCDMessageText* r0_msg = nullptr;
+    static BaseLCDMessageText* r1_msg = nullptr;
 
-    if (DISCONNECTED_MESSAGE_R0_STATIC)
-        lcd_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
-    else
-        lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
-    lcd->AddMessage(lcd_msg);
-    lcd->GetRaw()->setCursor(0, 0);
-    lcd->GetRaw()->print("Passed clearall1");
-    delay(5000);
-    if (DISCONNECTED_MESSAGE_R1)
-        lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
-    else
-        lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
+    if (r0_msg == nullptr) {
+#if DISCONNECTED_MESSAGE_R0_STATIC
+        r0_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#else
+        r0_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#endif
+#if DISCONNECTED_MESSAGE_R1_STATIC
+        r1_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#else
+        r1_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#endif
+        lcd->AddMessage(r0_msg);
+        lcd->AddMessage(r1_msg);
+        lcd->GetRaw()->clear();
+        lcd->GetRaw()->print("SetDisconnectedMessage");
+    } else {
+        r0_msg->Reset(false);
+        r1_msg->Reset(false);
+    }
 
-    lcd->AddMessage(lcd_msg); // CRASH HERE
-    lcd->GetRaw()->setCursor(0, 0);
-    lcd->GetRaw()->print("Passed clearall2");
-    delay(5000);
 }
 
 void setup() {
-
 #ifdef SERIAL_DEBUG
     Serial.begin(9600);
     Serial.write("Test");
@@ -455,7 +454,7 @@ void setup() {
     };
 
     bl.set_pin_config(my_pin_config);
-    bl.set_avrc_metadata_callback(avrc_metadata_callback);
+    // bl.set_avrc_metadata_callback(avrc_metadata_callback);
     bl.set_on_connection_state_changed(connection_state_changed_callback);
     bl.start(BL_DEVICE_NAME);
 
@@ -469,7 +468,7 @@ void loop() {
     led->Tick();
     ir->Tick();
 #else
-   if (lcd->Tick())
-       DisplayHeap();
+    if (lcd->Tick())
+        DisplayHeap();
 #endif
 }
