@@ -13,11 +13,11 @@ class LCDHandler;
 class BaseLCDMessage {
 	public:
 		bool enabled = true;
+		int priority = 0;
 
 		virtual bool DoUpdate(LCDHandler* lcd) = 0;
 		virtual void DoSilentUpdate(LCDHandler* lcd) = 0;
 
-		int GetPriority();
 		int GetAtRow();
 		byte GetFlags();
 		LCDMessageFreeOpt GetFreeFlags();
@@ -27,7 +27,6 @@ class BaseLCDMessage {
 		BaseLCDMessage* SetListForSilent(bool list_for_silent);
 
 	protected:
-		int priority = 0;
 		byte user_flags = 0;
 		int at_row;
 		bool list_for_silent;
@@ -55,27 +54,40 @@ class BaseLCDMessageText : public BaseLCDMessage {
 		const int sep_len = strlen(sep);
 };
 
+enum LCDMessageTextProcessOpt {
+	PURE_SCROLL,
+	STATIC_LIKE,
+};
+
 class LCDMessageText : public BaseLCDMessageText {
 	public:
-		LCDMessageText(int at_row, char* str, bool play_once = false, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR, int priority = 0);
+		LCDMessageText(int at_row, 
+					   char* str,
+					   bool play_once = false,
+					   LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR,
+					   int priority = 0
+			);
 
 
 		bool GetPlayOnce();
-
+		LCDMessageText* SetProcessOpt(LCDMessageTextProcessOpt process_opt);
 		bool DoUpdate(LCDHandler* lcd);
 		void Reset(bool recalculate_len = true) override;
 		
 	protected:
 		int idx = 0;
 		bool play_once = false;
+		LCDMessageTextProcessOpt process_opt;
+
 };
 
 class LCDMessageStaticText : public BaseLCDMessageText {
 	protected:
 		int play_for_x_ticks;
-		int src_play_for_x_ticks;
 
 	public:
+		int src_play_for_x_ticks;
+		
 		LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks = PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR, int priority = 0);
 
 		bool DoUpdate(LCDHandler* lcd);

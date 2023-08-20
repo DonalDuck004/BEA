@@ -98,6 +98,8 @@ void LCDHandler::RemoveMessages(){
             this->messages[i] = nullptr;
             this->messages_count--;
         }
+        else
+            this->messages[i]->enabled = false;
     }
 
     this->SortMessages(original_count);
@@ -129,7 +131,7 @@ void LCDHandler::SortMessages(int messages_count) {
             if (this->messages[j + 1] == nullptr)
                 continue;
 
-            if (this->messages[j] == nullptr || this->messages[j]->GetPriority() > this->messages[j + 1]->GetPriority())
+            if (this->messages[j] == nullptr || this->messages[j]->priority > this->messages[j + 1]->priority)
                 std::swap(this->messages[j], this->messages[j + 1]);
         }
     }
@@ -216,8 +218,7 @@ LCDMessageGroup LCDHandler::GetMessagesAtRow(int row) {
         }
     }
 
-    if (out.count != found)
-    {
+    if (out.count != found) {
         out.count = found;
         out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
     }
@@ -241,8 +242,7 @@ LCDMessageGroup LCDHandler::GetMessagesWithFlags(byte flags, bool strict) {
         }
     }
 
-    if (out.count != found)
-    {
+    if (out.count != found) {
         out.count = found;
         out.messages = (BaseLCDMessage**)realloc(out.messages, sizeof(BaseLCDMessage*) * found);
     }
@@ -333,9 +333,8 @@ void LCDHandler::DoUpdate() {
                     default:
                         lcd->clear();
                         lcd->print("Removed :D");
-                        delay(10000);
                         lcd->print(this->messages[i]->GetFreeFlags());
-                        delay(10000);
+                        lcd->print(" ");
                         lcd->print(this->messages[i]->GetFlags());
                         delay(10000);
                         this->RemoveMessageByRef(msgs.messages[i]);

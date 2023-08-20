@@ -5,10 +5,6 @@ bool LCDMessageText::GetPlayOnce() {
     return this->play_once;
 }
 
-int BaseLCDMessage::GetPriority() {
-    return this->priority;
-}
-
 int BaseLCDMessage::GetAtRow() {
     return this->at_row;
 }
@@ -77,12 +73,18 @@ void BaseLCDMessageText::Reset(bool recalculate_len) {
 LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op, int priority) :
     BaseLCDMessageText(at_row, str, free_op, priority) {
     this->play_once = play_once;
+    this->process_opt = LCDMessageTextProcessOpt::STATIC_LIKE;
 }
 
 void LCDMessageText::Reset(bool recalculate_len) {
     BaseLCDMessageText::Reset(recalculate_len);
 
     this->idx = 0;
+}
+
+LCDMessageText* LCDMessageText::SetProcessOpt(LCDMessageTextProcessOpt process_opt) {
+    this->process_opt = process_opt;
+    return this;
 }
 
 bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
@@ -101,12 +103,12 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
 
     int w = 0;
     int tmp;
-
-    if (this->str_len <= cols) {//(cols / this->str_len == 1) {
-        lcd->ClearRow(this->at_row);
+    // TODO Split in 2 class LCDMessageTextStaticLike with no play_once feature but with play_for_ticks
+    if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE ? this->str_len <= cols : (cols / this->str_len == 1)) {
+        lcd->ClearRow(this->at_row); // todo remove this call
         raw->setCursor(0, this->at_row);
         raw->write(this->str, this->str_len);
-    } else /*if (group_len > cols)*/ {
+    } else if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE || group_len > cols) {
         if (this->idx < this->str_len)
             w = raw->write(this->str + this->idx, min(cols, this->str_len - idx));
 
@@ -116,8 +118,7 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
                 raw->write(this->str, cols - w);
         }
 
-    }/* else {
-        lcd->ClearRow(this->at_row);
+    }else if (this->process_opt != LCDMessageTextProcessOpt::STATIC_LIKE){
         tmp = this->idx;
 
         while (true) {
@@ -137,7 +138,7 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
 
             tmp = 0;
         }
-    }*/
+    }
 
     tmp = this->idx++;
     this->idx %= group_len;
