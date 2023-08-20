@@ -3,6 +3,18 @@
 #include <Arduino.h>
 #include "../BEAHandler/BEAHandler.hpp"
 
+#ifndef BL_CONNECTING_BLINK_DELAY
+#	define BL_CONNECTING_BLINK_DELAY 250
+#endif
+
+#ifndef BL_DISCONNECTED_BLINK_DELAY
+#	define BL_DISCONNECTED_BLINK_DELAY 500
+#endif
+
+#ifndef BL_DISCONNECTING_BLINK_DELAY
+#	define BL_DISCONNECTING_BLINK_DELAY 750
+#endif
+
 class LedHandler : public BEAHandler{
 	private:
 		int pin;
