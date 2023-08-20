@@ -1,4 +1,3 @@
-#include <LiquidCrystal.h>
 #include <IRremote.hpp>
 
 #include "BluetoothA2DPSink.h"
@@ -25,7 +24,7 @@
 #define BL_TRACK_SINGER_MAX_LEN LCD_COLS * 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V2.1A"
+#define BL_DEVICE_NAME "BEA V2.5B"
 
 #define DISCONNECTED_MESSAGE_R0 "Disconnesso"
 #define DISCONNECTED_MESSAGE_R0_STATIC true
@@ -60,95 +59,6 @@ constexpr byte coffee_byte = 1;
 
 #endif
 
-class StaticBuffersBluetoothA2DPSink : public BluetoothA2DPSink {
-protected:
-    uint8_t* meta_buff = nullptr;
-
-    virtual void app_alloc_meta_buffer(esp_avrc_ct_cb_param_t* param) override
-    {
-        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(param);
-        rc->meta_rsp.attr_text[rc->meta_rsp.attr_length] = 0;
-        return;
-        /*if (meta_buff == nullptr)
-            this->meta_buff = (uint8_t*)malloc(sizeof(uint8_t) * 256);
-        ESP_LOGD(BT_AV_TAG, "%s", __func__);
-        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(param);
-        int cut_at = min(256, rc->meta_rsp.attr_length);
-        memcpy(this->meta_buff, rc->meta_rsp.attr_text, cut_at);
-        meta_buff[cut_at] = 0;
-
-        rc->meta_rsp.attr_text = meta_buff;*/
-    }
-
-    virtual void av_hdl_avrc_evt(uint16_t event, void* p_param) override
-    {
-        ESP_LOGD(BT_AV_TAG, "%s evt %d", __func__, event);
-        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(p_param);
-        switch (event) {
-        case ESP_AVRC_CT_CONNECTION_STATE_EVT: {
-            ESP_LOGI(BT_AV_TAG, "AVRC conn_state evt: state %d, [%s]", rc->conn_stat.connected, to_str(rc->conn_stat.remote_bda));
-
-#ifdef ESP_IDF_4
-            if (rc->conn_stat.connected) {
-                av_new_track();
-                // get remote supported event_ids of peer AVRCP Target
-                esp_avrc_ct_send_get_rn_capabilities_cmd(APP_RC_CT_TL_GET_CAPS);
-            }
-            else {
-                // clear peer notification capability record
-                s_avrc_peer_rn_cap.bits = 0;
-            }
-#else
-            if (rc->conn_stat.connected) {
-                av_new_track();
-            }
-#endif
-            break;
-
-        }
-        case ESP_AVRC_CT_PASSTHROUGH_RSP_EVT: {
-            ESP_LOGI(BT_AV_TAG, "AVRC passthrough rsp: key_code 0x%x, key_state %d", rc->psth_rsp.key_code, rc->psth_rsp.key_state);
-            break;
-        }
-        case ESP_AVRC_CT_METADATA_RSP_EVT: {
-            ESP_LOGI(BT_AV_TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
-            // call metadata callback if available
-            if (avrc_metadata_callback != nullptr) {
-                avrc_metadata_callback(rc->meta_rsp.attr_id, rc->meta_rsp.attr_text);
-            };
-            break;
-        }
-        case ESP_AVRC_CT_CHANGE_NOTIFY_EVT: {
-            //ESP_LOGI(BT_AV_TAG, "AVRC event notification: %d, param: %d", (int)rc->change_ntf.event_id, (int)rc->change_ntf.event_parameter);
-            av_notify_evt_handler(rc->change_ntf.event_id, rc->change_ntf.event_parameter);
-            break;
-        }
-        case ESP_AVRC_CT_REMOTE_FEATURES_EVT: {
-            ESP_LOGI(BT_AV_TAG, "AVRC remote features %x", rc->rmt_feats.feat_mask);
-            break;
-        }
-
-#ifdef ESP_IDF_4
-
-        case ESP_AVRC_CT_GET_RN_CAPABILITIES_RSP_EVT: {
-            ESP_LOGI(BT_AV_TAG, "remote rn_cap: count %d, bitmask 0x%x", rc->get_rn_caps_rsp.cap_count,
-                rc->get_rn_caps_rsp.evt_set.bits);
-            s_avrc_peer_rn_cap.bits = rc->get_rn_caps_rsp.evt_set.bits;
-            av_new_track();
-            //bt_av_playback_changed();
-            //bt_av_play_pos_changed();
-            break;
-        }
-
-#endif
-
-        default:
-            ESP_LOGE(BT_AV_TAG, "%s unhandled evt %d", __func__, event);
-            break;
-        }
-    }
-};
-
 static BluetoothA2DPSink bl;
 static LCDHandler* lcd = new LCDHandler();
 static LedHandler* led = new LedHandler(BL_LED_PIN);
@@ -159,48 +69,46 @@ inline int DecimalLength(int n) {
     return floor(log10f(n) + 1);
 }
 
-// TODO MERGE ProcessProgressBar and DisplayHeap
-// TODO Use map where possible
+LCDMessageStaticText* AddProgressBar(int val, int max_val, int play_for_ticks = PLAY_FOR_TICKS_DISABLED){
+    static LCDMessageStaticText* msg = nullptr;
+    static const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
+    static char* buff = (char*)malloc(sizeof(char) * LCD_COLS);
+    // 2 for || 4 for 000%
+    memset(buff, ' ', LCD_COLS);
 
-void ProcessProgressBar(int current_vol) {
-    char* str_number;
-    char* buff;
-    int filled;
-
-    assert(current_vol >= 0 && current_vol <= 100);
-
-    str_number = (char*)malloc(sizeof(char) * 5);
-    sprintf(str_number, "%3d%%", current_vol);
-
-    int bar_size = floor((float)(LCD_COLS - 3 - 3) / 5) * 5;
-    filled = (float)current_vol / 100 * bar_size;
-    buff = (char*)malloc(sizeof(char) * (LCD_COLS + 3 + 3 + 1));
+    int percentage = map(val, 0, max_val, 0, 100);
+    int filled = map(val, 0, max_val, 0, bar_size);
+    sprintf(buff + bar_size + 2, "%3d%%", percentage);
     buff[0] = '|';
     buff[bar_size + 1] = '|';
-    memmove(buff + bar_size + 2, str_number, strlen(str_number));
     memset(buff + 1, '#', filled);
     memset(buff + filled + 1, '-', bar_size - filled);
-    
-    LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, 3);
-    msg->SetFlags(VOLUNE_ID);
-    lcd->RemoveMessagesWithFlags(VOLUNE_ID, true, 1);
-    lcd->AddMessage(msg);
-    free(str_number);
+
+    if (msg == nullptr) {
+        msg = new LCDMessageStaticText(1, buff, play_for_ticks, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+        lcd->AddMessage(msg);
+    }
+
+    msg->src_play_for_x_ticks = play_for_ticks;
+    msg->Reset(false);
+
+    return msg;
+}
+
+void ProcessProgressBar(int current_vol) {
+    AddProgressBar(current_vol, 100, 3)->SetFlags(VOLUNE_ID)->priority = 1;
 }
 
 void DisplayHeap() {
 #ifdef MEM_EXTREME_DEBUG_BUILD
-    constexpr int display_time = 2;
+    constexpr int display_time = 1;
 #else
     constexpr int display_time = 3;
 #endif
-    static const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
-                                      // 2 for || 4 for 000%
+
     static char* buff_r0 = (char*)malloc(sizeof(char) * LCD_COLS);
-    static char* buff_r1 = (char*)malloc(sizeof(char) * LCD_COLS);
 
     memset(buff_r0, 0, LCD_COLS);
-    memset(buff_r1, 0, LCD_COLS);
     uint32_t total_heap = ESP.getHeapSize();
     uint32_t allocated_heap = total_heap - ESP.getFreeHeap();
 
@@ -208,29 +116,17 @@ void DisplayHeap() {
     int allocated_heap_kb = ((float)allocated_heap) / 1024;
     int total_heap_kb = ((float)total_heap) / 1024;
     sprintf(buff_r0, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
-
-    int percentage = map(allocated_heap, 0, total_heap, 0, 100);
-    int filled = map(allocated_heap, 0, total_heap, 0, bar_size);
-    sprintf(buff_r1 + bar_size + 2, "%3d%%", percentage);
-    buff_r1[0] = '|';
-    buff_r1[bar_size + 1] = '|';
-    memset(buff_r1 + 1, '#', filled);
-    memset(buff_r1 + filled + 1, '-', bar_size - filled);
+        
+    AddProgressBar(allocated_heap, total_heap, display_time)->SetFlags(HEAP_ID)->priority = 2;
 
     static LCDMessageStaticText* msg0 = nullptr; 
-    static LCDMessageStaticText* msg1 = nullptr;
     
     if (msg0 == nullptr) {
         msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
-        msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
         msg0->SetFlags(HEAP_ID);
-        msg1->SetFlags(HEAP_ID);
         lcd->AddMessage(msg0);
-        lcd->AddMessage(msg1);
-    } else {
+    } else
         msg0->Reset();
-        msg1->Reset();
-    }
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
@@ -314,18 +210,18 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
     if (!bl.is_connected())
         return;
 
-    int current_vol = ((float)bl.get_volume() / BL_MAX_AUDIO * 100) / 10 * 10;
+    int current_vol = map(bl.get_volume(), 0, BL_MAX_AUDIO, 0, 100);
 
     switch (cmd) {
         case IR_VOL_PLUS:
-            current_vol = current_vol + 10;
+            current_vol += 10;
             if (current_vol > 100) current_vol = 100;
             bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
             ProcessProgressBar(current_vol);
             break;
         case IR_VOL_MINUS:
-            current_vol = current_vol - 10;
+            current_vol -= 10;
             if (current_vol < 0) current_vol = 0;
             bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
@@ -382,6 +278,7 @@ void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
 
         if (*tmp_msg == nullptr) {
             *tmp_buff = (char*)malloc(sizeof(char) * buff_len + sizeof(char));
+            memset(*tmp_buff + buff_len - 3, '.', 3);
             *tmp_msg = new LCDMessageText(row, nullptr, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
             (*tmp_msg)->SetStr(*tmp_buff, false);
             lcd->AddMessage(*tmp_msg);
