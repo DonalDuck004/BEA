@@ -47,6 +47,7 @@ void LCDHandler::AddMessage(BaseLCDMessage* msg){
     }
     
     this->messages[this->messages_count - 1] = msg;
+
     if (this->messages_count != 1)
         this->SortMessages();
 }
@@ -303,6 +304,7 @@ void LCDHandler::DoUpdate() {
         bool tmp;
 
         for (int i = 0; i < this->messages_count; i++) {
+            continue;
             if (!(this->messages[i]->enabled && this->messages[i]->GetListForSilent()))
                 continue;
             tmp = false;
@@ -331,8 +333,11 @@ void LCDHandler::DoUpdate() {
                     default:
                         lcd->clear();
                         lcd->print("Removed :D");
+                        delay(10000);
                         lcd->print(this->messages[i]->GetFreeFlags());
+                        delay(10000);
                         lcd->print(this->messages[i]->GetFlags());
+                        delay(10000);
                         this->RemoveMessageByRef(msgs.messages[i]);
                         break;
                 }

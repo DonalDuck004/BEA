@@ -17,29 +17,20 @@
 #   undef MEM_DEBUG_BUILD
 #endif
 
+#define BL_TRACK_ROW 0
+#define BL_SINGER_ROW 1
 #define BL_META_TRACK_NAME 1
 #define BL_META_SINGER 2
+#define BL_TRACK_NAME_MAX_LEN LCD_COLS * 4
+#define BL_TRACK_SINGER_MAX_LEN LCD_COLS * 2
 
 #define BL_LED_PIN 13
 #define BL_DEVICE_NAME "BEA V2.1A"
-
-#define BL_DISCONNECTED_BLINK_DELAY 500
-#define BL_CONNECTING_BLINK_DELAY 250
-#define BL_DISCONNECTING_BLINK_DELAY 750
 
 #define DISCONNECTED_MESSAGE_R0 "Disconnesso"
 #define DISCONNECTED_MESSAGE_R0_STATIC true
 #define DISCONNECTED_MESSAGE_R1 BL_DEVICE_NAME
 #define DISCONNECTED_MESSAGE_R1_STATIC true
-
-#define IR_DISCONNECT 69
-#define IR_VOL_PLUS 70
-#define IR_VOL_MINUS 21
-#define IR_PAUSE 64
-#define IR_NEXT 67
-#define IR_BACK 68
-#define IR_SPARA_STRONZATA 22
-#define IR_HEAP_DEBUG 25
 
 #define TROLL_R0_ID  0b100000
 #define TROLL_R1_ID  0b010000
@@ -75,8 +66,10 @@ protected:
 
     virtual void app_alloc_meta_buffer(esp_avrc_ct_cb_param_t* param) override
     {
+        esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(param);
+        rc->meta_rsp.attr_text[rc->meta_rsp.attr_length] = 0;
         return;
-        if (meta_buff == nullptr)
+        /*if (meta_buff == nullptr)
             this->meta_buff = (uint8_t*)malloc(sizeof(uint8_t) * 256);
         ESP_LOGD(BT_AV_TAG, "%s", __func__);
         esp_avrc_ct_cb_param_t* rc = (esp_avrc_ct_cb_param_t*)(param);
@@ -84,7 +77,7 @@ protected:
         memcpy(this->meta_buff, rc->meta_rsp.attr_text, cut_at);
         meta_buff[cut_at] = 0;
 
-        rc->meta_rsp.attr_text = meta_buff;
+        rc->meta_rsp.attr_text = meta_buff;*/
     }
 
     virtual void av_hdl_avrc_evt(uint16_t event, void* p_param) override
@@ -156,8 +149,8 @@ protected:
     }
 };
 
+static BluetoothA2DPSink bl;
 static LCDHandler* lcd = new LCDHandler();
-static StaticBuffersBluetoothA2DPSink bl;
 static LedHandler* led = new LedHandler(BL_LED_PIN);
 static IRHandler* ir = new IRHandler();
 
@@ -229,7 +222,7 @@ void DisplayHeap() {
     
     if (msg0 == nullptr) {
         msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
-        msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2); 
+        msg1 = new LCDMessageStaticText(1, buff_r1, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
         msg0->SetFlags(HEAP_ID);
         msg1->SetFlags(HEAP_ID);
         lcd->AddMessage(msg0);
@@ -360,19 +353,45 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
 
 void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
     if (meta_type == BL_META_TRACK_NAME || meta_type == BL_META_SINGER) {
-        char* msg = str_copy((char*)meta);
+
+
+        static LCDMessageText* track_msg = nullptr;
+        static LCDMessageText* singer_msg = nullptr;
+        static char* buff_1 = nullptr;
+        static char* buff_2 = nullptr;
+
+        LCDMessageText** tmp_msg;
+        char** tmp_buff;
+        int buff_len;
+        int row;
+
         if (meta_type == BL_META_TRACK_NAME) {
             lcd->RemoveMessages();
             lcd->ClearAll();
+
+            tmp_msg = &track_msg;
+            tmp_buff = &buff_1;
+            buff_len = BL_TRACK_NAME_MAX_LEN;
+            row = BL_TRACK_ROW;
+        } else {
+            tmp_msg = &singer_msg;
+            tmp_buff = &buff_2;
+            buff_len = BL_TRACK_SINGER_MAX_LEN;
+            row = BL_SINGER_ROW;
         }
 
-        BaseLCDMessageText* lcd_msg;
-        if (strlen(msg) <= LCD_COLS)
-            lcd_msg = new LCDMessageStaticText(meta_type - 1, msg);
-        else 
-            lcd_msg = new LCDMessageText(meta_type - 1, msg);
+        if (*tmp_msg == nullptr) {
+            *tmp_buff = (char*)malloc(sizeof(char) * buff_len + sizeof(char));
+            *tmp_msg = new LCDMessageText(row, nullptr, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+            (*tmp_msg)->SetStr(*tmp_buff, false);
+            lcd->AddMessage(*tmp_msg);
+        }else
+            (*tmp_msg)->Reset(false);
 
-        // lcd->AddMessage(lcd_msg);
+        int len = min(buff_len, (int)strlen((char*)meta));
+        memcpy(*tmp_buff, (char*)meta, len);
+        (*tmp_buff)[len] = 0;
+        (*tmp_msg)->SetStrLen(len);
     }
 
 #ifdef SERIAL_DEBUG
@@ -411,8 +430,6 @@ void SetDisconnectedMessage() {
 #endif
         lcd->AddMessage(r0_msg);
         lcd->AddMessage(r1_msg);
-        lcd->GetRaw()->clear();
-        lcd->GetRaw()->print("SetDisconnectedMessage");
     } else {
         r0_msg->Reset(false);
         r1_msg->Reset(false);
@@ -454,7 +471,7 @@ void setup() {
     };
 
     bl.set_pin_config(my_pin_config);
-    // bl.set_avrc_metadata_callback(avrc_metadata_callback);
+    bl.set_avrc_metadata_callback(avrc_metadata_callback);
     bl.set_on_connection_state_changed(connection_state_changed_callback);
     bl.start(BL_DEVICE_NAME);
 

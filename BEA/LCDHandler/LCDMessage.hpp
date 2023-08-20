@@ -43,27 +43,30 @@ class BaseLCDMessageText : public BaseLCDMessage {
 		virtual bool DoUpdate(LCDHandler* lcd) = 0;
 		virtual void DoSilentUpdate(LCDHandler* lcd) {};
 		virtual void Reset(bool recalculate_len = true);
+		void SetStr(char* str, bool update_len = true);
 		void SetStrLen(int len);
 		char* TMPGetText() { return this->str; }
 
 	protected:
 		char* str;
 		int str_len;
+		
+		const char* sep = "   ";
+		const int sep_len = strlen(sep);
 };
 
 class LCDMessageText : public BaseLCDMessageText {
 	public:
 		LCDMessageText(int at_row, char* str, bool play_once = false, LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR, int priority = 0);
 
-		bool GetPlayed();
 
 		bool GetPlayOnce();
 
 		bool DoUpdate(LCDHandler* lcd);
+		void Reset(bool recalculate_len = true) override;
 		
 	protected:
 		int idx = 0;
-		bool played = false;
 		bool play_once = false;
 };
 
