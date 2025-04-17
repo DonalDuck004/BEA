@@ -24,7 +24,7 @@ void IRHandler::SetCallback(IRHandlerCBK* cbk) {
 }
 
 void IRHandler::DoUpdate() {
-    if (this->cbk != NULL)
+    if (this->cbk != nullptr)
         this->cbk(this, this->ir->decodedIRData.command);
 }
 

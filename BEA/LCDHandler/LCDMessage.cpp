@@ -1,10 +1,6 @@
 #include "LCDMessage.hpp"
 
 
-bool LCDMessageText::GetPlayed() {
-	return this->played;
-}
-
 bool LCDMessageText::GetPlayOnce() {
     return this->play_once;
 }
@@ -15,6 +11,10 @@ int BaseLCDMessage::GetAtRow() {
 
 byte BaseLCDMessage::GetFlags() {
     return this->user_flags;
+}
+
+LCDMessageFreeOpt BaseLCDMessage::GetFreeFlags() {
+    return this->free_op;
 }
 
 bool BaseLCDMessage::GetListForSilent() {
@@ -31,13 +31,24 @@ BaseLCDMessage* BaseLCDMessage::SetFlags(byte user_flags) {
     return this;
 }
 
-BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt free_op) {
+BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt free_op, int priority) {
 	this->str = str;
-	this->str_len = strlen(str);
+    if (str == nullptr)
+        this->str_len = 0;
+    else
+        this->str_len = strlen(str);
+
 	this->free_op = free_op;
     this->at_row = at_row;
+    this->priority = priority;
 
     this->list_for_silent = false;
+}
+
+void BaseLCDMessageText::SetStr(char* str, bool update_len){
+    this->str = str;
+    if (update_len)
+        SetStrLen(strlen(str));
 }
 
 void BaseLCDMessageText::SetStrLen(int len) {
@@ -48,70 +59,111 @@ void BaseLCDMessageText::SetStrLen(int len) {
 }
 
 BaseLCDMessageText::~BaseLCDMessageText() {
-	if (CHECK_BIT(this->free_op, LCDMessageFreeOpt::FREE_STR))
+	if (this->free_op == LCDMessageFreeOpt::FREE_STR)
 		free(this->str);
 }
 
+void BaseLCDMessageText::Reset(bool recalculate_len) {
+    if (recalculate_len)
+        this->SetStrLen(strlen(this->str));
 
-LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op) : BaseLCDMessageText(at_row, str, free_op) {
+    this->enabled = true;
+}
+
+LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op, int priority) :
+    BaseLCDMessageText(at_row, str, free_op, priority) {
     this->play_once = play_once;
+    this->process_opt = LCDMessageTextProcessOpt::STATIC_LIKE;
+}
+
+void LCDMessageText::Reset(bool recalculate_len) {
+    BaseLCDMessageText::Reset(recalculate_len);
+
+    this->idx = 0;
+}
+
+LCDMessageText* LCDMessageText::SetProcessOpt(LCDMessageTextProcessOpt process_opt) {
+    this->process_opt = process_opt;
+    return this;
 }
 
 bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
-    int cols = lcd->GetCols();
-    LiquidCrystal* raw = lcd->GetRaw();
-    
-    if (this->str_len < cols)
+    if (this->str_len == 0) {
         lcd->ClearRow(this->at_row);
-
-    raw->setCursor(0, this->at_row);
-
-    if (this->idx == -1)
-        raw->print(" ");
-
-    if (this->idx < this->str_len)
-        raw->print(str_span(this->str, this->idx < 0 ? 0 : this->idx));
-
-    if (this->idx == 1)
-        this->played = true;
-
-    if (this->played && this->play_once)
-        return true;
-
-    int diff = this->str_len - this->idx;
-    if (-3 < diff && diff < cols) {
-        int to_fill = cols - diff;
-        int x;
-
-        if (to_fill == 1)
-            x = 1;
-        else if (to_fill == cols || to_fill == 2)
-            x = 2;
-        else
-            x = 3;
-
-        raw->print(str_repeat(" ", x));
-
-        raw->print(str_span(this->str, 0, to_fill - x));
+        return false;
     }
 
-    if (diff == 0)
-        this->idx = -1;
-    else
-        this->idx++;
+    int cols = lcd->GetCols();
+
+    int group_len = this->sep_len + this->str_len;
+
+    LiquidCrystal* raw = lcd->GetRaw();
+    
+    raw->setCursor(0, this->at_row);
+
+    int w = 0;
+    int tmp;
+    // TODO Split in 2 class LCDMessageTextStaticLike with no play_once feature but with play_for_ticks
+    if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE ? this->str_len <= cols : (cols / this->str_len == 1)) {
+        lcd->ClearRow(this->at_row); // todo remove this call
+        raw->setCursor(0, this->at_row);
+        raw->write(this->str, this->str_len);
+    } else if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE || group_len > cols) {
+        if (this->idx < this->str_len)
+            w = raw->write(this->str + this->idx, min(cols, this->str_len - idx));
+
+        if (w < cols) {
+            w += raw->write(LCDMessageText::sep, this->idx - this->str_len >= 0 ? -idx + group_len : LCDMessageText::sep_len);
+            if (w < cols)
+                raw->write(this->str, cols - w);
+        }
+
+    }else if (this->process_opt != LCDMessageTextProcessOpt::STATIC_LIKE){
+        tmp = this->idx;
+
+        while (true) {
+            if (w + group_len > cols) {
+                w += raw->write(this->str, cols - w);
+                if (w < cols)
+                    raw->write(LCDMessageText::sep, cols - w);
+                break;
+            }
+
+            if (tmp > this->str_len)
+                w += raw->write(LCDMessageText::sep + (tmp - this->str_len));
+            else {
+                w += raw->write(this->str + tmp);
+                w += raw->write(LCDMessageText::sep);
+            }
+
+            tmp = 0;
+        }
+    }
+
+    tmp = this->idx++;
+    this->idx %= group_len;
+    if (tmp > this->idx && this->play_once)
+        return true;
 
     return false;
 }
 
 
-LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks, LCDMessageFreeOpt free_op) :
-    LCDMessageText(at_row, str, free_op) {
+LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks, LCDMessageFreeOpt free_op, int priority) :
+    BaseLCDMessageText(at_row, str, free_op, priority) {
     this->play_for_x_ticks = play_for_x_ticks;
+    this->src_play_for_x_ticks = play_for_x_ticks;
 }
 
 void LCDMessageStaticText::DoSilentUpdate(LCDHandler* lcd) {
     if (this->play_for_x_ticks == PLAY_FOR_TICKS_DISABLED)
         this->play_for_x_ticks--;
+}
+
+
+void LCDMessageStaticText::Reset(bool recalculate_len) {
+    BaseLCDMessageText::Reset(recalculate_len);
+    this->play_for_x_ticks = this->src_play_for_x_ticks;
 }
 
 bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {
@@ -121,18 +173,11 @@ bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {
     if (this->str_len < cols)
         lcd->ClearRow(this->at_row);
 
-
     raw->setCursor(0, this->at_row);
-    raw->print(str_span(this->str, 0, this->str_len - 1));
+    raw->write(this->str, this->str_len);
     
     if (this->play_for_x_ticks == PLAY_FOR_TICKS_DISABLED)
         return false;
-    else
-        return --this->play_for_x_ticks == 0;
-}
 
-
-LCDMessageStaticCustomChar::LCDMessageStaticCustomChar(int at_row, byte custom_char) {
-    this->at_row = at_row;
-    this->custom_char = custom_char;
+    return --this->play_for_x_ticks == 0;
 }

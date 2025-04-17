@@ -1,4 +1,3 @@
-#include <LiquidCrystal.h>
 #include <IRremote.hpp>
 
 #include "BluetoothA2DPSink.h"
@@ -10,36 +9,27 @@
 // #define SERIAL_DEBUG
 // #define DEBUG_IR_VALUE
 // #define TROLL_BUILD
-// #define MEM_DEBUG_BUILD
+#define MEM_DEBUG_BUILD
 // #define MEM_EXTREME_DEBUG_BUILD
 
 #if defined(MEM_EXTREME_DEBUG_BUILD) && defined(MEM_DEBUG_BUILD)
 #   undef MEM_DEBUG_BUILD
 #endif
 
+#define BL_TRACK_ROW 0
+#define BL_SINGER_ROW 1
 #define BL_META_TRACK_NAME 1
 #define BL_META_SINGER 2
+#define BL_TRACK_NAME_MAX_LEN LCD_COLS * 4
+#define BL_TRACK_SINGER_MAX_LEN LCD_COLS * 2
 
 #define BL_LED_PIN 13
-#define BL_DEVICE_NAME "BEA V1.10"
-
-#define BL_DISCONNECTED_BLINK_DELAY 500
-#define BL_CONNECTING_BLINK_DELAY 250
-#define BL_DISCONNECTING_BLINK_DELAY 750
+#define BL_DEVICE_NAME "BEA V2.5B"
 
 #define DISCONNECTED_MESSAGE_R0 "Disconnesso"
 #define DISCONNECTED_MESSAGE_R0_STATIC true
 #define DISCONNECTED_MESSAGE_R1 BL_DEVICE_NAME
 #define DISCONNECTED_MESSAGE_R1_STATIC true
-
-#define IR_DISCONNECT 69
-#define IR_VOL_PLUS 70
-#define IR_VOL_MINUS 21
-#define IR_PAUSE 64
-#define IR_NEXT 67
-#define IR_BACK 68
-#define IR_SPARA_STRONZATA 22
-#define IR_HEAP_DEBUG 25
 
 #define TROLL_R0_ID  0b100000
 #define TROLL_R1_ID  0b010000
@@ -69,8 +59,8 @@ constexpr byte coffee_byte = 1;
 
 #endif
 
-static LCDHandler* lcd = new LCDHandler();
 static BluetoothA2DPSink bl;
+static LCDHandler* lcd = new LCDHandler();
 static LedHandler* led = new LedHandler(BL_LED_PIN);
 static IRHandler* ir = new IRHandler();
 
@@ -79,70 +69,64 @@ inline int DecimalLength(int n) {
     return floor(log10f(n) + 1);
 }
 
-// TODO MERGE ProcessProgressBar and DisplayHeap
-// TODO Use map where possible
+LCDMessageStaticText* AddProgressBar(int val, int max_val, int play_for_ticks = PLAY_FOR_TICKS_DISABLED){
+    static LCDMessageStaticText* msg = nullptr;
+    static const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
+    static char* buff = (char*)malloc(sizeof(char) * LCD_COLS);
+    // 2 for || 4 for 000%
+    memset(buff, ' ', LCD_COLS);
 
-void ProcessProgressBar(int current_vol) {
-    char* str_number;
-    char* buff;
-    int filled;
-
-    assert(current_vol >= 0 && current_vol <= 100);
-
-    str_number = (char*)malloc(sizeof(char) * 5);
-    sprintf(str_number, "%3d%%", current_vol);
-
-    int bar_size = floor((float)(LCD_COLS - 3 - 3) / 5) * 5;
-    filled = (float)current_vol / 100 * bar_size;
-    buff = (char*)malloc(sizeof(char) * (LCD_COLS + 3 + 3 + 1));
+    int percentage = map(val, 0, max_val, 0, 100);
+    int filled = map(val, 0, max_val, 0, bar_size);
+    sprintf(buff + bar_size + 2, "%3d%%", percentage);
     buff[0] = '|';
     buff[bar_size + 1] = '|';
-    memmove(buff + bar_size + 2, str_number, strlen(str_number));
     memset(buff + 1, '#', filled);
     memset(buff + filled + 1, '-', bar_size - filled);
-    
-    LCDMessageStaticText* msg = new LCDMessageStaticText(1, buff, 3);
-    msg->SetFlags(VOLUNE_ID);
-    lcd->RemoveMessagesWithFlags(VOLUNE_ID, true, 1);
-    lcd->AddMessage(msg);
-    free(str_number);
+
+    if (msg == nullptr) {
+        msg = new LCDMessageStaticText(1, buff, play_for_ticks, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+        lcd->AddMessage(msg);
+    }
+
+    msg->src_play_for_x_ticks = play_for_ticks;
+    msg->Reset(false);
+
+    return msg;
+}
+
+void ProcessProgressBar(int current_vol) {
+    AddProgressBar(current_vol, 100, 3)->SetFlags(VOLUNE_ID)->priority = 1;
 }
 
 void DisplayHeap() {
-    const int bar_size = floor((float)(LCD_COLS - 2 - 4) / 5) * 5;
-                                      // 2 for || 4 for 000%
-   
+#ifdef MEM_EXTREME_DEBUG_BUILD
+    constexpr int display_time = 1;
+#else
+    constexpr int display_time = 3;
+#endif
+
+    static char* buff_r0 = (char*)malloc(sizeof(char) * LCD_COLS);
+
+    memset(buff_r0, 0, LCD_COLS);
     uint32_t total_heap = ESP.getHeapSize();
     uint32_t allocated_heap = total_heap - ESP.getFreeHeap();
-    int percentage = map(allocated_heap, 0, total_heap, 0, 100);
-    int filled = map(allocated_heap, 0, total_heap, 0, bar_size);
-    char* buff = (char*)malloc(sizeof(char) * (LCD_COLS + 1));
-    char* str_number = (char*)malloc(sizeof(char) * 5); // TODO Write directly to buff
-    sprintf(str_number, "%3d%%", percentage);
-    buff[0] = '|';
-    buff[bar_size + 1] = '|';
-    memmove(buff + bar_size + 2, str_number, strlen(str_number));
-    memset(buff + 1, '#', filled);
-    memset(buff + filled + 1, '-', bar_size - filled);
-    free(str_number);
+
 
     int allocated_heap_kb = ((float)allocated_heap) / 1024;
     int total_heap_kb = ((float)total_heap) / 1024;
-#ifdef MEM_EXTREME_DEBUG_BUILD
-    constexpr int dispaly_time = 1;
-#else
-    constexpr int dispaly_time = 3;
-#endif
+    sprintf(buff_r0, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
+        
+    AddProgressBar(allocated_heap, total_heap, display_time)->SetFlags(HEAP_ID)->priority = 2;
 
-    LCDMessageStaticText* msg1 = new LCDMessageStaticText(1, buff, dispaly_time);
-    buff = (char*)malloc(sizeof(char) * (10 + DecimalLength(allocated_heap_kb) + DecimalLength(total_heap_kb)));
-    sprintf(buff, "Heap: %d/%dKB", allocated_heap_kb, total_heap_kb);
-    LCDMessageStaticText* msg2 = new LCDMessageStaticText(0, buff, dispaly_time);
-    msg1->SetFlags(HEAP_ID);
-    msg2->SetFlags(HEAP_ID);
-    lcd->RemoveMessagesWithFlags(HEAP_ID, true, 2);
-    lcd->AddMessage(msg1);
-    lcd->AddMessage(msg2);
+    static LCDMessageStaticText* msg0 = nullptr; 
+    
+    if (msg0 == nullptr) {
+        msg0 = new LCDMessageStaticText(0, buff_r0, display_time, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT, 2);
+        msg0->SetFlags(HEAP_ID);
+        lcd->AddMessage(msg0);
+    } else
+        msg0->Reset();
 }
 
 void HandleIR(IRHandler* self, uint16_t cmd) {
@@ -195,8 +179,6 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
                     buff_r1 = "Sniffer         ";
                     break;
                 case 4:
-                    break;
-                    // TODO FIX
                     lcd->AddMessage((new LCDMessageText(0, "zio mattone, zio yogurt, zio banana", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R0_ID));
                     lcd->AddMessage((new LCDMessageText(1, "Sono tutti zii ma diverse categorie", true, LCDMessageFreeOpt::NO_CLEAN))->SetFlags(TROLL_R1_ID));
                     break;
@@ -228,18 +210,18 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
     if (!bl.is_connected())
         return;
 
-    int current_vol = ((float)bl.get_volume() / BL_MAX_AUDIO * 100) / 10 * 10;
+    int current_vol = map(bl.get_volume(), 0, BL_MAX_AUDIO, 0, 100);
 
     switch (cmd) {
         case IR_VOL_PLUS:
-            current_vol = current_vol + 10;
+            current_vol += 10;
             if (current_vol > 100) current_vol = 100;
             bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
             ProcessProgressBar(current_vol);
             break;
         case IR_VOL_MINUS:
-            current_vol = current_vol - 10;
+            current_vol -= 10;
             if (current_vol < 0) current_vol = 0;
             bl.set_volume(map(current_vol, 0, 100, 0, BL_MAX_AUDIO));
 
@@ -267,19 +249,46 @@ void HandleIR(IRHandler* self, uint16_t cmd) {
 
 void avrc_metadata_callback(uint8_t meta_type, const uint8_t* meta) {
     if (meta_type == BL_META_TRACK_NAME || meta_type == BL_META_SINGER) {
-        char* msg = str_copy((char*)meta);
+
+
+        static LCDMessageText* track_msg = nullptr;
+        static LCDMessageText* singer_msg = nullptr;
+        static char* buff_1 = nullptr;
+        static char* buff_2 = nullptr;
+
+        LCDMessageText** tmp_msg;
+        char** tmp_buff;
+        int buff_len;
+        int row;
+
         if (meta_type == BL_META_TRACK_NAME) {
             lcd->RemoveMessages();
             lcd->ClearAll();
+
+            tmp_msg = &track_msg;
+            tmp_buff = &buff_1;
+            buff_len = BL_TRACK_NAME_MAX_LEN;
+            row = BL_TRACK_ROW;
+        } else {
+            tmp_msg = &singer_msg;
+            tmp_buff = &buff_2;
+            buff_len = BL_TRACK_SINGER_MAX_LEN;
+            row = BL_SINGER_ROW;
         }
 
-        BaseLCDMessageText* lcd_msg;
-        if (strlen(msg) <= LCD_COLS)
-            lcd_msg = new LCDMessageStaticText(meta_type - 1, msg);
-        else 
-            lcd_msg = new LCDMessageText(meta_type - 1, msg);
+        if (*tmp_msg == nullptr) {
+            *tmp_buff = (char*)malloc(sizeof(char) * buff_len + sizeof(char));
+            memset(*tmp_buff + buff_len - 3, '.', 3);
+            *tmp_msg = new LCDMessageText(row, nullptr, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+            (*tmp_msg)->SetStr(*tmp_buff, false);
+            lcd->AddMessage(*tmp_msg);
+        }else
+            (*tmp_msg)->Reset(false);
 
-        lcd->AddMessage(lcd_msg);
+        int len = min(buff_len, (int)strlen((char*)meta));
+        memcpy(*tmp_buff, (char*)meta, len);
+        (*tmp_buff)[len] = 0;
+        (*tmp_msg)->SetStrLen(len);
     }
 
 #ifdef SERIAL_DEBUG
@@ -291,34 +300,38 @@ void connection_state_changed_callback(esp_a2d_connection_state_t state, void* m
     if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTED) {
         ir->DeviceConnected();
         led->SetOn();
-    }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
+    } else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTED) {
         lcd->RemoveMessages();
         SetDisconnectedMessage();
         led->SetDelay(BL_DISCONNECTED_BLINK_DELAY);
-    }
-    else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING)
+    } else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_CONNECTING)
         led->SetDelay(BL_CONNECTING_BLINK_DELAY);
     else if (state == esp_a2d_connection_state_t::ESP_A2D_CONNECTION_STATE_DISCONNECTING)
         led->SetDelay(BL_DISCONNECTING_BLINK_DELAY);
 }
 
 void SetDisconnectedMessage() {
-    BaseLCDMessageText* lcd_msg;
-    lcd->ClearAll();
+    static BaseLCDMessageText* r0_msg = nullptr;
+    static BaseLCDMessageText* r1_msg = nullptr;
 
-    if (DISCONNECTED_MESSAGE_R0_STATIC)
-        lcd_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
-    else
-        lcd_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, LCDMessageFreeOpt::NO_CLEAN);
-    lcd->AddMessage(lcd_msg);
+    if (r0_msg == nullptr) {
+#if DISCONNECTED_MESSAGE_R0_STATIC
+        r0_msg = new LCDMessageStaticText(0, DISCONNECTED_MESSAGE_R0, PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#else
+        r0_msg = new LCDMessageText(0, DISCONNECTED_MESSAGE_R0, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#endif
+#if DISCONNECTED_MESSAGE_R1_STATIC
+        r1_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, PLAY_FOR_TICKS_DISABLED, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#else
+        r1_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, false, LCDMessageFreeOpt::REMOVE_ALL_PERSISTENT);
+#endif
+        lcd->AddMessage(r0_msg);
+        lcd->AddMessage(r1_msg);
+    } else {
+        r0_msg->Reset(false);
+        r1_msg->Reset(false);
+    }
 
-    if (DISCONNECTED_MESSAGE_R1)
-        lcd_msg = new LCDMessageStaticText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
-    else
-        lcd_msg = new LCDMessageText(1, DISCONNECTED_MESSAGE_R1, LCDMessageFreeOpt::NO_CLEAN);
-
-    lcd->AddMessage(lcd_msg);
 }
 
 void setup() {
@@ -369,7 +382,7 @@ void loop() {
     led->Tick();
     ir->Tick();
 #else
-   if (lcd->Tick())
-       DisplayHeap();
+    if (lcd->Tick())
+        DisplayHeap();
 #endif
 }
