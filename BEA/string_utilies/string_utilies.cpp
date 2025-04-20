@@ -1,9 +1,8 @@
 #include "string_utilies.hpp"
 
 char* str_copy(char* str){
-  char* x = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+  char* x = (char*)malloc(sizeof(char) * strlen(str));
   memcpy(x, str, strlen(str));
-  x[strlen(str)] = 0;
   return x;
 }
 

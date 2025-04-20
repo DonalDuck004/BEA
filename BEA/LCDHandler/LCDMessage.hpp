@@ -44,7 +44,6 @@ class BaseLCDMessageText : public BaseLCDMessage {
 		virtual void Reset(bool recalculate_len = true);
 		void SetStr(char* str, bool update_len = true);
 		void SetStrLen(int len);
-		char* TMPGetText() { return this->str; }
 
 	protected:
 		char* str;
@@ -70,16 +69,32 @@ class LCDMessageText : public BaseLCDMessageText {
 
 
 		bool GetPlayOnce();
-		LCDMessageText* SetProcessOpt(LCDMessageTextProcessOpt process_opt);
 		bool DoUpdate(LCDHandler* lcd);
 		void Reset(bool recalculate_len = true) override;
 		
 	protected:
 		int idx = 0;
 		bool play_once = false;
-		LCDMessageTextProcessOpt process_opt;
 
+		void UpdateShort(int cols, LiquidCrystal* raw, int group_len);
+		void UpdateLong(int cols, LiquidCrystal* raw, int group_len);
+		void UpdateStatic(int cols, LiquidCrystal* raw);
+
+		virtual void DispatchUpdate(int cols, LiquidCrystal* raw, int group_len);
 };
+
+class LCDMessageStaticLikeText : public LCDMessageText {
+	public:
+		LCDMessageStaticLikeText(int at_row,
+			char* str,
+			bool play_once = false,
+			LCDMessageFreeOpt free_op = LCDMessageFreeOpt::FREE_STR,
+			int priority = 0
+		) : LCDMessageText(at_row, str, play_once, free_op, priority) {};
+	protected:
+		virtual void DispatchUpdate(int cols, LiquidCrystal* raw, int group_len) override;
+};
+
 
 class LCDMessageStaticText : public BaseLCDMessageText {
 	protected:
