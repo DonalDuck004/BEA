@@ -1,10 +1,6 @@
 #include "LCDMessage.hpp"
 
-
-bool LCDMessageText::GetPlayOnce() {
-    return this->play_once;
-}
-
+#pragma region BaseLCDMessage
 int BaseLCDMessage::GetAtRow() {
     return this->at_row;
 }
@@ -31,6 +27,9 @@ BaseLCDMessage* BaseLCDMessage::SetFlags(byte user_flags) {
     return this;
 }
 
+#pragma endregion
+
+#pragma region BaseLCDMessageText
 BaseLCDMessageText::BaseLCDMessageText(int at_row, char* str, LCDMessageFreeOpt free_op, int priority) {
 	this->str = str;
     if (str == nullptr)
@@ -70,10 +69,12 @@ void BaseLCDMessageText::Reset(bool recalculate_len) {
     this->enabled = true;
 }
 
+#pragma endregion
+
+#pragma region LCDMessageText
 LCDMessageText::LCDMessageText(int at_row, char* str, bool play_once, LCDMessageFreeOpt free_op, int priority) :
     BaseLCDMessageText(at_row, str, free_op, priority) {
     this->play_once = play_once;
-    this->process_opt = LCDMessageTextProcessOpt::STATIC_LIKE;
 }
 
 void LCDMessageText::Reset(bool recalculate_len) {
@@ -82,9 +83,59 @@ void LCDMessageText::Reset(bool recalculate_len) {
     this->idx = 0;
 }
 
-LCDMessageText* LCDMessageText::SetProcessOpt(LCDMessageTextProcessOpt process_opt) {
-    this->process_opt = process_opt;
-    return this;
+bool LCDMessageText::GetPlayOnce() {
+    return this->play_once;
+}
+
+void LCDMessageText::UpdateShort(int cols, LiquidCrystal* raw, int group_len) {
+    int tmp = this->idx;
+    int w = 0;
+
+    while (true) {
+        if (w + group_len > cols) {
+            w += raw->write(this->str, cols - w);
+            if (w < cols)
+                raw->write(LCDMessageText::sep, cols - w);
+            break;
+        }
+
+        if (tmp > this->str_len)
+            w += raw->write(LCDMessageText::sep + (tmp - this->str_len));
+        else {
+            w += raw->write(this->str + tmp);
+            w += raw->write(LCDMessageText::sep);
+        }
+
+        tmp = 0;
+    }
+}
+
+void LCDMessageText::UpdateLong(int cols, LiquidCrystal* raw, int group_len) {
+    int w = 0;
+
+    if (this->idx < this->str_len)
+        w = raw->write(this->str + this->idx, min(cols, this->str_len - idx));
+
+    if (w < cols) {
+        w += raw->write(LCDMessageText::sep, this->idx - this->str_len >= 0 ? -idx + group_len : LCDMessageText::sep_len);
+        if (w < cols)
+            raw->write(this->str, cols - w);
+    }
+}
+
+void LCDMessageText::UpdateStatic(int cols, LiquidCrystal* raw) {
+    raw->write(this->str, this->str_len);
+    for (int i = this->str_len; i < cols; i++)
+        raw->write(' ');
+}
+
+void LCDMessageText::DispatchUpdate(int cols, LiquidCrystal* raw, int group_len) {
+    if (cols / this->str_len == 1)
+        this->UpdateStatic(cols, raw);
+    else if (group_len > cols)
+        this->UpdateLong(cols, raw, group_len);
+    else
+        this->UpdateShort(cols, raw, group_len);
 }
 
 bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
@@ -93,62 +144,22 @@ bool LCDMessageText::DoUpdate(LCDHandler* lcd) {
         return false;
     }
 
-    int cols = lcd->GetCols();
-
     int group_len = this->sep_len + this->str_len;
-
     LiquidCrystal* raw = lcd->GetRaw();
-    
+
     raw->setCursor(0, this->at_row);
 
-    int w = 0;
-    int tmp;
-    // TODO Split in 2 class LCDMessageTextStaticLike with no play_once feature but with play_for_ticks
-    if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE ? this->str_len <= cols : (cols / this->str_len == 1)) {
-        lcd->ClearRow(this->at_row); // todo remove this call
-        raw->setCursor(0, this->at_row);
-        raw->write(this->str, this->str_len);
-    } else if (this->process_opt == LCDMessageTextProcessOpt::STATIC_LIKE || group_len > cols) {
-        if (this->idx < this->str_len)
-            w = raw->write(this->str + this->idx, min(cols, this->str_len - idx));
+    this->DispatchUpdate(lcd->GetCols(), raw, group_len);
 
-        if (w < cols) {
-            w += raw->write(LCDMessageText::sep, this->idx - this->str_len >= 0 ? -idx + group_len : LCDMessageText::sep_len);
-            if (w < cols)
-                raw->write(this->str, cols - w);
-        }
-
-    }else if (this->process_opt != LCDMessageTextProcessOpt::STATIC_LIKE){
-        tmp = this->idx;
-
-        while (true) {
-            if (w + group_len > cols) {
-                w += raw->write(this->str, cols - w);
-                if (w < cols)
-                    raw->write(LCDMessageText::sep, cols - w);
-                break;
-            }
-
-            if (tmp > this->str_len)
-                w += raw->write(LCDMessageText::sep + (tmp - this->str_len));
-            else {
-                w += raw->write(this->str + tmp);
-                w += raw->write(LCDMessageText::sep);
-            }
-
-            tmp = 0;
-        }
-    }
-
-    tmp = this->idx++;
+    int tmp = this->idx++;
     this->idx %= group_len;
-    if (tmp > this->idx && this->play_once)
-        return true;
 
-    return false;
+    return tmp > this->idx && this->play_once;
 }
 
+#pragma endregion
 
+#pragma region LCDMessageStaticText
 LCDMessageStaticText::LCDMessageStaticText(int at_row, char* str, int play_for_x_ticks, LCDMessageFreeOpt free_op, int priority) :
     BaseLCDMessageText(at_row, str, free_op, priority) {
     this->play_for_x_ticks = play_for_x_ticks;
@@ -159,7 +170,6 @@ void LCDMessageStaticText::DoSilentUpdate(LCDHandler* lcd) {
     if (this->play_for_x_ticks == PLAY_FOR_TICKS_DISABLED)
         this->play_for_x_ticks--;
 }
-
 
 void LCDMessageStaticText::Reset(bool recalculate_len) {
     BaseLCDMessageText::Reset(recalculate_len);
@@ -181,3 +191,15 @@ bool LCDMessageStaticText::DoUpdate(LCDHandler* lcd) {
 
     return --this->play_for_x_ticks == 0;
 }
+
+#pragma endregion
+
+#pragma region LCDMessageStaticLikeText
+void LCDMessageStaticLikeText::DispatchUpdate(int cols, LiquidCrystal* raw, int group_len) {
+    if (this->str_len <= cols)
+        this->UpdateStatic(cols, raw);
+    else if (group_len > cols)
+        this->UpdateLong(cols, raw, group_len);
+}
+
+#pragma endregion
